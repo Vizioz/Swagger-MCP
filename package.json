@@ -1,0 +1,50 @@
+{
+  "name": "swagger-mcp",
+  "version": "1.0.0",
+  "description": "Fetch Swagger definition from a URL",
+  "type": "module",
+  "bin": {
+    "swagger-definition-fetcher": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').copyFileSync('.env', 'build/.env'); require('fs').chmodSync('build/index.js', '755')\"",
+    "prepare": "npm run build",
+    "watch": "tsc --watch",
+    "inspector": "tsc && node -e \"require('fs').copyFileSync('.env', 'build/.env'); require('fs').chmodSync('build/index.js', '755')\" && npx @modelcontextprotocol/inspector build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/readingdancer/swagger-mcp.git"
+  },
+  "keywords": [
+    "swagger",
+    "api",
+    "mcp",
+    "server",
+    "openapi",
+    "generation"
+  ],
+  "author": "Chris Houston",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/readingdancer/swagger-mcp/issues"
+  },
+  "homepage": "https://github.com/readingdancer/swagger-mcp#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "@types/minimist": "^1.2.5",
+    "axios": "^1.6.7",
+    "dotenv": "^16.4.5",
+    "minimist": "^1.2.8",
+    "winston": "^3.12.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}
