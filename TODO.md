@@ -2,10 +2,6 @@
 
 ## Current Tasks
 
-- 🟥 Fix endpoint path issues in projects-api-v3.oas2.yml for authentication and file operations tests:
-  - '/projects/api/v3/me.json' not found (used in authentication test)
-  - '/projects/api/v3/files.json' not found (used in file operations test)
-  - '/projects/api/v3/files/{fileId}.json' not found (used in file operations test)
 - 🟥 Fix error handling test for invalid HTTP method - message doesn't match expected pattern
 - 🟥 Fix format-suffix-mock test extraction failure: "Could not extract getFormatSuffix function from source"
 - 🟨 Add support for authentication in generated tool handlers
@@ -16,6 +12,7 @@
 
 ## Completed Tasks
 
+- ✅ Fix endpoint path issues in projects-api-v3.oas2.yml for authentication and file operations tests:
 - ✅ Fix OpenAPI version compatibility tests - updated to check for 'inputSchema' instead of 'parameters'
 - ✅ Fix schema validation tests - updated endpoints to use ones that exist in the Swagger definition
 - ✅ Fix schema validation failures - updated to check for 'inputSchema' instead of 'parameters'

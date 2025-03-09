@@ -28,7 +28,7 @@ async function testAuthenticationSupport(): Promise<void> {
   
   try {
     // Test an endpoint that requires authentication
-    const path = '/projects/api/v3/me.json';
+    const path = '/projects/api/v3/projects.json';
     const method = 'GET';
     
     console.log(`Testing authentication for ${method} ${path}`);

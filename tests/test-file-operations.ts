@@ -30,9 +30,10 @@ async function testFileOperations(): Promise<void> {
   // Test endpoints that involve file operations
   const testCases = [
     // File upload endpoint (adjust path based on your API)
-    { path: '/projects/api/v3/files.json', method: 'POST', operation: 'upload' },
+    // I don't have an example of a file upload endpoint in the Swagger file, so I'm using a download endpoint instead :
+    // { path: '/projects/api/v3/files.json', method: 'POST', operation: 'upload' },
     // File download endpoint (adjust path based on your API)
-    { path: '/projects/api/v3/files/{fileId}.json', method: 'GET', operation: 'download' }
+    { path: '/projects/api/v3/calendar/events.pdf', method: 'GET', operation: 'download' }
   ];
   
   for (const testCase of testCases) {
