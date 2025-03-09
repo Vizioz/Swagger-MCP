@@ -11,7 +11,8 @@
     "prepare": "npm run build",
     "watch": "tsc --watch",
     "inspector": "tsc && node -e \"require('fs').copyFileSync('.env', 'build/.env'); require('fs').chmodSync('build/index.js', '755')\" && npx @modelcontextprotocol/inspector build/index.js",
-    "test": "node tests/run-all-tests.js"
+    "test": "npx tsx tests/run-all-tests.ts",
+    "test:js": "node tests/run-all-tests.js"
   },
   "files": [
     "build"
@@ -45,6 +46,7 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.0",
+    "ts-node": "^10.9.2",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
   }
