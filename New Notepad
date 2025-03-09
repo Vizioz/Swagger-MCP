@@ -1,0 +1,15 @@
+## What I want this project to be able to do:
+
+# Completed Tasks Done
+
+- Downloads a Swagger specification and stores it locally for faster reference - ✅
+- Request a list of all endpoints - Returns the HTTP Methods and descriptions - ✅
+- Request a list of the models used by an endpoint - Returns a list of all the models used by the endpoint - ✅
+- Request a TypeScript code block for the model definition (passing in the model name) - Return a block of TS code for the model definition - ✅
+- Request a TypeScript code block for the Model Context Protocol Tool definition (passing in the endpoint name) - Return a block of TS code for the MCP tool definition - ✅
+
+# All the following MCP functions will need to have the Swagger File passed in from the .swagger-mcp file in the root of the solution, we will then be getting all the following data from this file:
+
+## Maybe work on these later
+- Request service to connect to the end point
+- Request MCP function definitions 

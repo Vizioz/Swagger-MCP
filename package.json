@@ -10,7 +10,8 @@
     "build": "tsc && node -e \"require('fs').copyFileSync('.env', 'build/.env'); require('fs').chmodSync('build/index.js', '755')\"",
     "prepare": "npm run build",
     "watch": "tsc --watch",
-    "inspector": "tsc && node -e \"require('fs').copyFileSync('.env', 'build/.env'); require('fs').chmodSync('build/index.js', '755')\" && npx @modelcontextprotocol/inspector build/index.js"
+    "inspector": "tsc && node -e \"require('fs').copyFileSync('.env', 'build/.env'); require('fs').chmodSync('build/index.js', '755')\" && npx @modelcontextprotocol/inspector build/index.js",
+    "test": "node tests/run-all-tests.js"
   },
   "files": [
     "build"

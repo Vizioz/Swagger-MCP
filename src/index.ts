@@ -9,7 +9,11 @@ import logger from "./utils/logger.js";
 
 // Import tool definitions and handlers
 import { toolDefinitions, 
-  handleGetSwaggerDefinition
+  handleGetSwaggerDefinition,
+  handleListEndpoints,
+  handleListEndpointModels,
+  handleGenerateModelCode,
+  handleGenerateEndpointToolCode
 } from "./tools/index.js";
 
 // Create MCP server
@@ -51,6 +55,18 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     switch (name) {
       case "getSwaggerDefinition":
         return await handleGetSwaggerDefinition(input);
+      
+      case "listEndpoints":
+        return await handleListEndpoints();
+      
+      case "listEndpointModels":
+        return await handleListEndpointModels(input);
+      
+      case "generateModelCode":
+        return await handleGenerateModelCode(input);
+      
+      case "generateEndpointToolCode":
+        return await handleGenerateEndpointToolCode(input);
       
       default:
         throw new Error("Unknown tool");

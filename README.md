@@ -94,14 +94,12 @@ The following tools are available through the MCP server:
 
 ## Setting Up Your New Project
 
-To let the Agent know which end point you are trying to use, you can either prompt it, or you can store it in a configuration file:
+First ask the agent to get the Swagger file, make sure you give it the URL for the swagger file, or at least a way to find it for you, this will download the file and save it locally with a hashed filename, this filename will automatically be added to a `.swagger-mcp` settings file in the root of your current solution.
 
-### Using a Configuration File
-
-You can create a `.swagger-mcp` file in the root of your project with the following structure:
+## Auto generated .swagger-mcp config file
 
 ```
-SWAGGER_URL = UrlToSwaggerEndpoint
+SWAGGER_FILENAME = TheFilenameOfTheLocallyStoredSwaggerFile
 ```
 
 This simple configuration file associates your current project with a specific Swagger API, we may use it to store more details in the future.
