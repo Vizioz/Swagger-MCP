@@ -2,10 +2,12 @@
 
 ## Current Tasks
 
-- 🟥 Fix OpenAPI version compatibility tests - failing on all versions (2.0, 3.0, 3.1)
-- 🟥 Fix endpoint path issues in projects-api-v3.oas2.yml for authentication and file operations tests
-- 🟥 Fix schema validation failures for parameters property
-- 🟥 Fix format-suffix-mock test extraction failure
+- 🟥 Fix endpoint path issues in projects-api-v3.oas2.yml for authentication and file operations tests:
+  - '/projects/api/v3/me.json' not found (used in authentication test)
+  - '/projects/api/v3/files.json' not found (used in file operations test)
+  - '/projects/api/v3/files/{fileId}.json' not found (used in file operations test)
+- 🟥 Fix error handling test for invalid HTTP method - message doesn't match expected pattern
+- 🟥 Fix format-suffix-mock test extraction failure: "Could not extract getFormatSuffix function from source"
 - 🟨 Add support for authentication in generated tool handlers
 - 🟨 Improve error handling in generated tool handlers
 - 🟨 Add support for file uploads and downloads
@@ -14,7 +16,9 @@
 
 ## Completed Tasks
 
-- ✅ Fix tests to use projects-api-v3.oas2.yml instead of mock-swagger.json
+- ✅ Fix OpenAPI version compatibility tests - updated to check for 'inputSchema' instead of 'parameters'
+- ✅ Fix schema validation tests - updated endpoints to use ones that exist in the Swagger definition
+- ✅ Fix schema validation failures - updated to check for 'inputSchema' instead of 'parameters'
 - ✅ Create examples for different Swagger API types (OpenAPI 2.0, 3.0, etc.)
 - ✅ Add unit tests for the improved generator
 - ✅ Add validation for complex endpoint structures like Create Task
