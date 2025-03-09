@@ -25,7 +25,13 @@ const tsTests: string[] = [
   'test-tool-name.ts',
   'test-mcp-schema-compliance.ts',
   'test-mcp-validation.ts',
-  'test-create-task-validation.ts'
+  'test-create-task-validation.ts',
+  // New tests
+  'test-openapi-versions.ts',
+  'test-authentication-support.ts',
+  'test-file-operations.ts',
+  'test-error-handling.ts',
+  'test-schema-validation.ts'
 ];
 
 // Run JavaScript tests

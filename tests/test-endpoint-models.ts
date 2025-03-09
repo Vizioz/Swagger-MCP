@@ -21,11 +21,11 @@ async function testListEndpointModels(): Promise<void> {
     console.log('Testing listEndpointModels...');
     
     // Use the mock Swagger file for testing
-    const swaggerFilePath = path.join(__dirname, 'mock-swagger.json');
+    const swaggerFilePath = path.join(__dirname, '..', 'ReferenceFiles', 'projects-api-v3.oas2.yml');
     
     // Example endpoint from the Swagger definition
     const params: EndpointParams = {
-      path: '/projects/api/v3/tasks.json',
+      path: '/projects/api/v3/projects.json',
       method: 'GET',
       swaggerFilePath
     };

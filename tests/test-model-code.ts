@@ -20,11 +20,11 @@ async function testGenerateModelCode(): Promise<void> {
     console.log('Testing generateModelCode...');
     
     // Use the mock Swagger file for testing
-    const swaggerFilePath = path.join(__dirname, 'mock-swagger.json');
+    const swaggerFilePath = path.join(__dirname, '..', 'ReferenceFiles', 'projects-api-v3.oas2.yml');
     
     // Example model from the Swagger definition
     const params: ModelParams = {
-      modelName: 'view.TaskV205',
+      modelName: 'Project',
       swaggerFilePath
     };
     

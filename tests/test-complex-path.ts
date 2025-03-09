@@ -13,6 +13,7 @@ import generateEndpointToolCode from '../build/services/generateEndpointToolCode
 interface EndpointParams {
   path: string;
   method: string;
+  swaggerFilePath: string;
   includeApiInName: boolean;
   includeVersionInName: boolean;
   singularizeResourceNames: boolean;
@@ -32,6 +33,7 @@ async function testComplexPath(): Promise<void> {
     console.log('\nComplex path with singularization:');
     const params: EndpointParams = {
       ...endpoint,
+      swaggerFilePath: path.join(__dirname, '..', 'ReferenceFiles', 'projects-api-v3.oas2.yml'),
       includeApiInName: false,
       includeVersionInName: false,
       singularizeResourceNames: true

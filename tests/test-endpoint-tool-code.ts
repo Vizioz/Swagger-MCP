@@ -25,7 +25,7 @@ async function testGenerateEndpointToolCode(): Promise<void> {
     console.log('Testing generateEndpointToolCode with different naming options...');
     
     // Use the mock Swagger file for testing
-    const swaggerFilePath = path.join(__dirname, 'mock-swagger.json');
+    const swaggerFilePath = path.join(__dirname, '..', 'ReferenceFiles', 'projects-api-v3.oas2.yml');
     
     // Example endpoint from the Swagger definition
     const endpoint = {

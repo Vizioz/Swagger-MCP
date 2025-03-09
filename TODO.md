@@ -2,8 +2,10 @@
 
 ## Current Tasks
 
-- 🟨 Add unit tests for the improved generator
-- 🟨 Create examples for different Swagger API types (OpenAPI 2.0, 3.0, etc.)
+- 🟥 Fix OpenAPI version compatibility tests - failing on all versions (2.0, 3.0, 3.1)
+- 🟥 Fix endpoint path issues in projects-api-v3.oas2.yml for authentication and file operations tests
+- 🟥 Fix schema validation failures for parameters property
+- 🟥 Fix format-suffix-mock test extraction failure
 - 🟨 Add support for authentication in generated tool handlers
 - 🟨 Improve error handling in generated tool handlers
 - 🟨 Add support for file uploads and downloads
@@ -12,6 +14,9 @@
 
 ## Completed Tasks
 
+- ✅ Fix tests to use projects-api-v3.oas2.yml instead of mock-swagger.json
+- ✅ Create examples for different Swagger API types (OpenAPI 2.0, 3.0, etc.)
+- ✅ Add unit tests for the improved generator
 - ✅ Add validation for complex endpoint structures like Create Task
 - ✅ Implement validation for generated tool definitions against MCP schema
 - ✅ Fix the generateEndpointToolCode method to properly handle json.Unmarshaler interfaces in OpenAPI definitions
@@ -22,4 +27,4 @@
 - ✅ Include comprehensive documentation in generated tool definitions
 - ✅ Make generated code self-contained without external dependencies
 - ✅ Update README.md with documentation for the improved generator
-- ✅ Add AI-specific instructions in tool descriptions 
+- ✅ Add AI-specific instructions in tool descriptions
