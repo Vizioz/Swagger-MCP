@@ -1,0 +1,119 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Date Time Test API
+  description: A test API with date and time types to test json.Unmarshaler handling
+host: api.example.com
+basePath: /api
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /events:
+    get:
+      description: Returns all events
+      operationId: getEvents
+      parameters:
+        - name: startDate
+          in: query
+          description: Start date filter (format YYYY-MM-DD)
+          required: false
+          type: string
+          format: date
+        - name: endDate
+          in: query
+          description: End date filter (format YYYY-MM-DD)
+          required: false
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Event list response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Event'
+    post:
+      description: Creates a new event
+      operationId: createEvent
+      parameters:
+        - name: event
+          in: body
+          description: Event to create
+          required: true
+          schema:
+            $ref: '#/definitions/NewEvent'
+      responses:
+        '201':
+          description: Event created
+          schema:
+            $ref: '#/definitions/Event'
+definitions:
+  Date:
+    type: object
+    description: A custom date type that implements json.Unmarshaler
+    properties:
+      value:
+        type: string
+        format: date
+  DateTime:
+    type: object
+    description: A custom datetime type that implements json.Unmarshaler
+    properties:
+      value:
+        type: string
+        format: date-time
+  Duration:
+    type: object
+    description: A custom duration type that implements json.Unmarshaler
+    properties:
+      value:
+        type: string
+        description: Duration in ISO 8601 format (e.g. PT1H30M)
+  Event:
+    type: object
+    required:
+      - id
+      - title
+      - startDateTime
+      - endDateTime
+    properties:
+      id:
+        type: integer
+        format: int64
+      title:
+        type: string
+      description:
+        type: string
+      startDateTime:
+        $ref: '#/definitions/DateTime'
+      endDateTime:
+        $ref: '#/definitions/DateTime'
+      createdAt:
+        $ref: '#/definitions/DateTime'
+      duration:
+        $ref: '#/definitions/Duration'
+      date:
+        $ref: '#/definitions/Date'
+  NewEvent:
+    type: object
+    required:
+      - title
+      - startDateTime
+      - endDateTime
+    properties:
+      title:
+        type: string
+      description:
+        type: string
+      startDateTime:
+        $ref: '#/definitions/DateTime'
+      endDateTime:
+        $ref: '#/definitions/DateTime'
+      date:
+        $ref: '#/definitions/Date'
+      duration:
+        $ref: '#/definitions/Duration' 

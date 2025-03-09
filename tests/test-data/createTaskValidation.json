@@ -1,0 +1,292 @@
+{
+    "attachmentOptions": {
+      "removeOtherFiles": "<boolean>"
+    },
+    "attachments": {
+      "files": [
+        {
+          "categoryId": "<integer>",
+          "id": "<integer>"
+        },
+        {
+          "categoryId": "<integer>",
+          "id": "<integer>"
+        }
+      ],
+      "pendingFiles": [
+        {
+          "categoryId": "<integer>",
+          "reference": "<string>"
+        },
+        {
+          "categoryId": "<integer>",
+          "reference": "<string>"
+        }
+      ]
+    },
+    "card": {
+      "columnId": "<integer>"
+    },
+    "predecessors": [
+      {
+        "id": "<integer>",
+        "type": "<string>"
+      },
+      {
+        "id": "<integer>",
+        "type": "<string>"
+      }
+    ],
+    "tags": [
+      {
+        "color": "<string>",
+        "name": "<string>",
+        "projectId": "<integer>"
+      },
+      {
+        "color": "<string>",
+        "name": "<string>",
+        "projectId": "<integer>"
+      }
+    ],
+    "task": {
+      "assignees": {
+        "companyIds": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": [
+            "<integer>",
+            "<integer>"
+          ]
+        },
+        "teamIds": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": [
+            "<integer>",
+            "<integer>"
+          ]
+        },
+        "userIds": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": [
+            "<integer>",
+            "<integer>"
+          ]
+        }
+      },
+      "attachmentIds": [
+        "<integer>",
+        "<integer>"
+      ],
+      "changeFollowers": {
+        "companyIds": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": [
+            "<integer>",
+            "<integer>"
+          ]
+        },
+        "teamIds": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": [
+            "<integer>",
+            "<integer>"
+          ]
+        },
+        "userIds": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": [
+            "<integer>",
+            "<integer>"
+          ]
+        }
+      },
+      "commentFollowers": {
+        "companyIds": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": [
+            "<integer>",
+            "<integer>"
+          ]
+        },
+        "teamIds": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": [
+            "<integer>",
+            "<integer>"
+          ]
+        },
+        "userIds": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": [
+            "<integer>",
+            "<integer>"
+          ]
+        }
+      },
+      "completedAt": "<string>",
+      "completedBy": "<integer>",
+      "createdAt": "<string>",
+      "createdBy": "<integer>",
+      "crmDealIds": [
+        "<integer>",
+        "<integer>"
+      ],
+      "customFields": {
+        "Values": [
+          {
+            "countryCode": "<string>",
+            "currencySymbol": "<string>",
+            "customfieldId": "<integer>",
+            "urlTextToDisplay": "<string>",
+            "value": {}
+          },
+          {
+            "countryCode": "<string>",
+            "currencySymbol": "<string>",
+            "customfieldId": "<integer>",
+            "urlTextToDisplay": "<string>",
+            "value": {}
+          }
+        ]
+      },
+      "description": "<string>",
+      "descriptionContentType": "<string>",
+      "dueAt": {
+        "Null": "<boolean>",
+        "Set": "<boolean>",
+        "Value": {}
+      },
+      "estimatedMinutes": "<integer>",
+      "grantAccessTo": {
+        "companyIds": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": [
+            "<integer>",
+            "<integer>"
+          ]
+        },
+        "teamIds": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": [
+            "<integer>",
+            "<integer>"
+          ]
+        },
+        "userIds": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": [
+            "<integer>",
+            "<integer>"
+          ]
+        }
+      },
+      "hasDeskTickets": "<boolean>",
+      "name": "<string>",
+      "originalDueDate": {
+        "Null": "<boolean>",
+        "Set": "<boolean>",
+        "Value": {}
+      },
+      "parentTaskId": "<integer>",
+      "priority": {
+        "Null": "<boolean>",
+        "Set": "<boolean>",
+        "Value": "<string>"
+      },
+      "private": "<boolean>",
+      "progress": "<integer>",
+      "reminders": [
+        {
+          "isRelative": "<boolean>",
+          "note": "<string>",
+          "relativeNumberDays": "<integer>",
+          "remindAt": "<string>",
+          "type": "<string>",
+          "userId": "<integer>"
+        },
+        {
+          "isRelative": "<boolean>",
+          "note": "<string>",
+          "relativeNumberDays": "<integer>",
+          "remindAt": "<string>",
+          "type": "<string>",
+          "userId": "<integer>"
+        }
+      ],
+      "repeatOptions": {
+        "duration": "<integer>",
+        "editOption": "<string>",
+        "endsAt": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": {}
+        },
+        "frequency": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": "<string>"
+        },
+        "monthlyRepeatType": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": "<string>"
+        },
+        "rrule": "<string>",
+        "selectedDays": {
+          "Null": "<boolean>",
+          "Set": "<boolean>",
+          "Value": [
+            "<string>",
+            "<string>"
+          ]
+        }
+      },
+      "startAt": {
+        "Null": "<boolean>",
+        "Set": "<boolean>",
+        "Value": {}
+      },
+      "status": "<string>",
+      "tagIds": [
+        "<integer>",
+        "<integer>"
+      ],
+      "taskgroupId": "<integer>",
+      "tasklistId": "<integer>",
+      "templateRoleName": "<string>",
+      "ticketId": "<integer>"
+    },
+    "taskOptions": {
+      "appendAssignees": "<boolean>",
+      "checkInvalidusers": "<boolean>",
+      "everyoneMustDo": "<boolean>",
+      "fireWebhook": "<boolean>",
+      "isTemplate": "<boolean>",
+      "logActivity": "<boolean>",
+      "notify": "<boolean>",
+      "parseInlineTags": "<boolean>",
+      "positionAfterTaskId": "<integer>",
+      "pushDependents": "<boolean>",
+      "pushSubtasks": "<boolean>",
+      "shiftProjectDates": "<boolean>",
+      "useDefaults": "<boolean>",
+      "useNotifyViaTWIM": "<boolean>"
+    },
+    "workflows": {
+      "positionAfterTask": "<integer>",
+      "stageId": "<integer>",
+      "workflowId": "<integer>"
+    }
+  }

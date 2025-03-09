@@ -51,6 +51,18 @@ export async function handleGenerateEndpointToolCode(input: any) {
     const tsCode = await swaggerService.generateEndpointToolCode(input);
     logger.info(`Generated TypeScript code for endpoint ${input.method} ${input.path}`);
     
+    // Check if the response is a validation error message (starts with "MCP Schema Validation Failed")
+    if (tsCode.trim().startsWith('MCP Schema Validation Failed')) {
+      logger.error('MCP schema validation failed');
+      return {
+        content: [{
+          type: "text",
+          text: tsCode
+        }],
+        isError: true
+      };
+    }
+    
     return {
       content: [{
         type: "text",
@@ -63,7 +75,8 @@ export async function handleGenerateEndpointToolCode(input: any) {
       content: [{
         type: "text",
         text: `Error generating endpoint tool code: ${error.message}`
-      }]
+      }],
+      isError: true
     };
   }
 } 

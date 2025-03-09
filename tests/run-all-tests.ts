@@ -23,7 +23,9 @@ const tsTests: string[] = [
   'test-endpoints.ts',
   'test-model-code.ts',
   'test-tool-name.ts',
-  'test-mcp-schema-compliance.ts'
+  'test-mcp-schema-compliance.ts',
+  'test-mcp-validation.ts',
+  'test-create-task-validation.ts'
 ];
 
 // Run JavaScript tests

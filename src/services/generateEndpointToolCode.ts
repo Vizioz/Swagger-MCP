@@ -5,11 +5,9 @@
  */
 
 import fs from 'fs';
-import path from 'path';
 import yaml from 'js-yaml';
 import logger from '../utils/logger.js';
-import listEndpointModels from './listEndpointModels.js';
-import { Model } from './listEndpointModels.js';
+import { validateMCPSchema, formatValidationErrors } from '../utils/validateMCPSchema.js';
 
 // Interface for the function parameters
 export interface GenerateEndpointToolCodeParams {
@@ -76,7 +74,19 @@ async function generateEndpointToolCode(params: GenerateEndpointToolCodeParams):
     const handlerFunction = generateHandlerFunction(toolName, method, endpointPath);
     
     // Combine the tool definition and handler function
-    return `${toolDefinition}\n\n${handlerFunction}`;
+    const generatedCode = `${toolDefinition}\n\n${handlerFunction}`;
+    
+    // Validate the generated code against the MCP schema
+    logger.info('Validating generated code against MCP schema');
+    const validationResult = validateMCPSchema(generatedCode);
+    
+    if (!validationResult.isValid) {
+      logger.error('Generated code failed MCP schema validation');
+      return formatValidationErrors(validationResult.errors);
+    }
+    
+    logger.info('Generated code passed MCP schema validation');
+    return generatedCode;
   } catch (error: any) {
     logger.error(`Error generating endpoint tool code: ${error.message}`);
     throw error;
@@ -333,6 +343,12 @@ function processSchema(swaggerDefinition: any, schema: any): any {
   // Handle $ref
   if (schema.$ref) {
     const modelName = schema.$ref.split('/').pop();
+    
+    // Check if this is a potential json.Unmarshaler interface
+    if (isLikelyUnmarshaler(swaggerDefinition, modelName)) {
+      return processUnmarshalerType(swaggerDefinition, modelName);
+    }
+    
     return extractModelSchema(swaggerDefinition, modelName);
   }
   
@@ -385,6 +401,173 @@ function processSchema(swaggerDefinition: any, schema: any): any {
   }
   
   return result;
+}
+
+/**
+ * Check if a model is likely to be a json.Unmarshaler interface
+ * @param swaggerDefinition The Swagger definition object
+ * @param modelName The name of the model
+ * @returns True if the model is likely to be a json.Unmarshaler interface
+ */
+function isLikelyUnmarshaler(swaggerDefinition: any, modelName: string): boolean {
+  const model = swaggerDefinition.definitions?.[modelName] || swaggerDefinition.components?.schemas?.[modelName];
+  
+  // If the model is not found, check if the name suggests a special type
+  if (!model) {
+    // Check if the model name suggests a date/time or special type
+    const specialTypeNames = [
+      'Date', 'DateTime', 'Time', 'Duration', 'Timestamp',
+      'Nullable', 'Optional', 'Slice', 'Array', 'List',
+      'Int64', 'Float64', 'Bool', 'String'
+    ];
+    
+    return specialTypeNames.some(name => modelName.includes(name));
+  }
+  
+  // Check if the model name suggests a date/time type
+  const dateTimeNames = ['Date', 'DateTime', 'Time', 'Duration', 'Timestamp'];
+  if (dateTimeNames.some(name => modelName.includes(name))) {
+    return true;
+  }
+  
+  // Check if the description mentions unmarshaler
+  if (model.description && 
+      (model.description.toLowerCase().includes('unmarshaler') || 
+       model.description.toLowerCase().includes('unmarshal'))) {
+    return true;
+  }
+  
+  // Check if it's an object with a single 'value' property
+  if (model.type === 'object' && 
+      model.properties && 
+      Object.keys(model.properties).length === 1 && 
+      model.properties.value) {
+    return true;
+  }
+  
+  return false;
+}
+
+/**
+ * Process a json.Unmarshaler type
+ * @param swaggerDefinition The Swagger definition object
+ * @param modelName The name of the model
+ * @returns The processed schema
+ */
+function processUnmarshalerType(swaggerDefinition: any, modelName: string): any {
+  const model = swaggerDefinition.definitions?.[modelName] || swaggerDefinition.components?.schemas?.[modelName];
+  
+  // Handle specific known types by name
+  if (modelName.includes('NullableDate')) {
+    return {
+      type: 'string',
+      format: 'date',
+      description: model?.description || 'A nullable date value (format: YYYY-MM-DD)'
+    };
+  }
+  
+  if (modelName.includes('NullableInt64Slice') || modelName.includes('NullableIntSlice')) {
+    return {
+      type: 'array',
+      items: { type: 'integer' },
+      description: model?.description || 'A nullable array of integers'
+    };
+  }
+  
+  if (modelName.includes('NullableTaskPriority')) {
+    return {
+      type: 'string',
+      enum: ['low', 'normal', 'high'],
+      description: model?.description || 'A nullable task priority value'
+    };
+  }
+  
+  // If the model is not found, infer the type from the name
+  if (!model) {
+    // Infer the type based on the model name
+    let inferredType = 'string';
+    let inferredFormat = '';
+    let description = `Model '${modelName}' not found`;
+    
+    // Check for date/time types
+    if (modelName.includes('Date') || modelName.includes('Time')) {
+      inferredType = 'string';
+      inferredFormat = modelName.includes('Time') ? 'date-time' : 'date';
+      description = `${description} - Inferred as a date${modelName.includes('Time') ? '-time' : ''} value`;
+    }
+    // Check for numeric types
+    else if (modelName.includes('Int') || modelName.includes('Float') || modelName.includes('Number')) {
+      inferredType = modelName.includes('Float') ? 'number' : 'integer';
+      description = `${description} - Inferred as a numeric value`;
+    }
+    // Check for boolean types
+    else if (modelName.includes('Bool')) {
+      inferredType = 'boolean';
+      description = `${description} - Inferred as a boolean value`;
+    }
+    // Check for array/slice types
+    else if (modelName.includes('Slice') || modelName.includes('Array') || modelName.includes('List')) {
+      inferredType = 'array';
+      description = `${description} - Inferred as an array`;
+      
+      // Try to infer the item type
+      let itemType = 'string';
+      if (modelName.includes('Int64Slice') || modelName.includes('IntArray')) {
+        itemType = 'integer';
+      } else if (modelName.includes('Float64Slice') || modelName.includes('FloatArray')) {
+        itemType = 'number';
+      } else if (modelName.includes('BoolSlice') || modelName.includes('BoolArray')) {
+        itemType = 'boolean';
+      }
+      
+      return {
+        type: inferredType,
+        items: { type: itemType },
+        description: description
+      };
+    }
+    
+    return {
+      type: inferredType,
+      format: inferredFormat || undefined,
+      description: description
+    };
+  }
+  
+  // If it's an object with a single 'value' property, extract that property
+  if (model.type === 'object' && model.properties && model.properties.value) {
+    const valueProperty = model.properties.value;
+    
+    // Create a primitive type with the appropriate format
+    const result: any = {
+      type: mapSwaggerTypeToJsonSchema(valueProperty.type || 'string')
+    };
+    
+    // Add description from the model
+    if (model.description) {
+      result.description = model.description;
+    }
+    
+    // Add format if available
+    if (valueProperty.format) {
+      result.format = valueProperty.format;
+    }
+    
+    // Add description from the value property if available
+    if (valueProperty.description) {
+      result.description = result.description 
+        ? `${result.description} (${valueProperty.description})`
+        : valueProperty.description;
+    }
+    
+    return result;
+  }
+  
+  // For other cases, return a simplified representation
+  return {
+    type: model.type || 'object',
+    description: model.description || `Model '${modelName}'`
+  };
 }
 
 /**
