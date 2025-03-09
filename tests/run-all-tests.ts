@@ -9,15 +9,10 @@ const __dirname = path.dirname(__filename);
 
 console.log('Running all tests...\n');
 
-// Keep the original JS tests for now
-const jsTests: string[] = [
-  'test-endpoint-tool-code.js',
-  'test-format-suffix-mock.js',
-  'test-calendar-events.js',
-  'test-combined-features.js'
-];
+// No more JavaScript tests to run
+const jsTests: string[] = [];
 
-// Add TypeScript tests as we convert them
+// TypeScript tests
 const tsTests: string[] = [
   'test-endpoint-tool-code.ts',
   'test-format-suffix-mock.ts',
@@ -26,25 +21,31 @@ const tsTests: string[] = [
 ];
 
 // Run JavaScript tests
-jsTests.forEach((test: string, index: number) => {
-  console.log(`\n${index + 1}. Running ${test}...\n`);
+for (let i = 0; i < jsTests.length; i++) {
+  const test = jsTests[i];
+  console.log(`\n${i + 1}. Running ${test}...`);
+  
   try {
-    execSync(`node ${path.join(__dirname, test)}`, { stdio: 'inherit' });
-    console.log(`\n✅ ${test} completed successfully.\n`);
+    const { execSync } = await import('child_process');
+    execSync(`node R:\\Development\\Projects\\swagger-mcp\\tests\\${test}`, { stdio: 'inherit' });
+    console.log(`\n✅ ${test} completed successfully.`);
   } catch (error: any) {
-    console.error(`\n❌ ${test} failed with error: ${error.message}\n`);
+    console.log(`\n❌ ${test} failed with error: ${error.message}`);
   }
-});
+}
 
 // Run TypeScript tests
-tsTests.forEach((test: string, index: number) => {
-  console.log(`\n${jsTests.length + index + 1}. Running ${test}...\n`);
+for (let i = 0; i < tsTests.length; i++) {
+  const test = tsTests[i];
+  console.log(`\n${i + jsTests.length + 1}. Running ${test}...`);
+  
   try {
-    execSync(`npx tsx ${path.join(__dirname, test)}`, { stdio: 'inherit' });
-    console.log(`\n✅ ${test} completed successfully.\n`);
+    const { execSync } = await import('child_process');
+    execSync(`npx tsx R:\\Development\\Projects\\swagger-mcp\\tests\\${test}`, { stdio: 'inherit' });
+    console.log(`\n✅ ${test} completed successfully.`);
   } catch (error: any) {
-    console.error(`\n❌ ${test} failed with error: ${error.message}\n`);
+    console.log(`\n❌ ${test} failed with error: ${error.message}`);
   }
-});
+}
 
 console.log('\nAll tests completed.'); 
