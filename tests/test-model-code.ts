@@ -12,15 +12,20 @@ import generateModelCode from '../build/services/generateModelCode.js';
 
 interface ModelParams {
   modelName: string;
+  swaggerFilePath: string;
 }
 
 async function testGenerateModelCode(): Promise<void> {
   try {
     console.log('Testing generateModelCode...');
     
+    // Use the mock Swagger file for testing
+    const swaggerFilePath = path.join(__dirname, 'mock-swagger.json');
+    
     // Example model from the Swagger definition
     const params: ModelParams = {
-      modelName: 'view.TaskV205'
+      modelName: 'view.TaskV205',
+      swaggerFilePath
     };
     
     console.log(`Testing with model: ${params.modelName}`);
@@ -33,6 +38,13 @@ async function testGenerateModelCode(): Promise<void> {
     
     // Save the generated code to a file for easier viewing
     const outputPath = path.join(__dirname, 'generated/generated-model.ts');
+    
+    // Ensure the directory exists
+    const outputDir = path.dirname(outputPath);
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+    
     fs.writeFileSync(outputPath, tsCode);
     console.log(`Generated code saved to: ${outputPath}`);
   } catch (error: any) {

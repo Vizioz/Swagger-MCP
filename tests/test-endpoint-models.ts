@@ -13,16 +13,21 @@ import listEndpointModels from '../build/services/listEndpointModels.js';
 interface EndpointParams {
   path: string;
   method: string;
+  swaggerFilePath: string;
 }
 
 async function testListEndpointModels(): Promise<void> {
   try {
     console.log('Testing listEndpointModels...');
     
+    // Use the mock Swagger file for testing
+    const swaggerFilePath = path.join(__dirname, 'mock-swagger.json');
+    
     // Example endpoint from the Swagger definition
     const params: EndpointParams = {
       path: '/projects/api/v3/tasks.json',
-      method: 'GET'
+      method: 'GET',
+      swaggerFilePath
     };
     
     console.log(`Testing with endpoint: ${params.method} ${params.path}`);

@@ -57,7 +57,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return await handleGetSwaggerDefinition(input);
       
       case "listEndpoints":
-        return await handleListEndpoints();
+        return await handleListEndpoints(input);
       
       case "listEndpointModels":
         return await handleListEndpointModels(input);
@@ -69,7 +69,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return await handleGenerateEndpointToolCode(input);
       
       default:
-        throw new Error("Unknown tool");
+        return {
+          content: [{
+            type: "text",
+            text: `Unknown tool: ${name}`
+          }]
+        };
     }
   } catch (error: any) {
     logger.error(`MCP tool error: ${error.message}`);

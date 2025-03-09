@@ -13,7 +13,11 @@ import listEndpoints from '../build/services/listEndpoints.js';
 async function testListEndpoints(): Promise<void> {
   try {
     console.log('Testing listEndpoints...');
-    const endpoints = await listEndpoints();
+    
+    // Use the mock Swagger file for testing
+    const swaggerFilePath = path.join(__dirname, 'mock-swagger.json');
+    
+    const endpoints = await listEndpoints({ swaggerFilePath });
     console.log('Endpoints:');
     console.log(JSON.stringify(endpoints, null, 2));
     console.log(`Found ${endpoints.length} endpoints.`);

@@ -161,7 +161,7 @@ async function testGenerateToolName(): Promise<void> {
 
 async function testWithOptions(
   operation: MockOperation, 
-  path: string, 
+  endpointPath: string, 
   method: string,
   includeApiInName: boolean,
   includeVersionInName: boolean,
@@ -170,33 +170,32 @@ async function testWithOptions(
   try {
     // Create a temporary .swagger-mcp file for testing
     const swaggerConfigPath = './tests/.swagger-mcp-temp';
-    fs.writeFileSync(swaggerConfigPath, 'SWAGGER_FILENAME=tests/mock-swagger.json');
+    const mockSwaggerPath = path.join(__dirname, 'mock-swagger.json');
+    fs.writeFileSync(swaggerConfigPath, `SWAGGER_FILEPATH=${mockSwaggerPath}`);
     
     // Create a mock Swagger file
-    const mockSwaggerPath = './tests/mock-swagger.json';
     const mockSwagger: {
       swagger: string;
-      info: { title: string; version: string };
-      paths: Record<string, any>;
+      paths: {
+        [key: string]: {
+          [key: string]: MockOperation;
+        };
+      };
     } = {
       swagger: '2.0',
-      info: { title: 'Test API', version: '1.0.0' },
       paths: {}
     };
-    mockSwagger.paths[path] = {
-      [method.toLowerCase()]: {
-        operationId: operation.operationId,
-        summary: operation.summary,
-        description: operation.description,
-        responses: { '200': { description: 'Success' } }
-      }
-    };
+    
+    mockSwagger.paths[endpointPath] = {};
+    mockSwagger.paths[endpointPath][method.toLowerCase()] = operation;
+    
     fs.writeFileSync(mockSwaggerPath, JSON.stringify(mockSwagger, null, 2));
     
-    // Generate the code
+    // Test the tool name generation
     const params = {
-      path,
+      path: endpointPath,
       method,
+      swaggerFilePath: mockSwaggerPath,
       includeApiInName,
       includeVersionInName,
       singularizeResourceNames
@@ -208,7 +207,7 @@ async function testWithOptions(
     const toolName = toolNameMatch ? toolNameMatch[1] : 'Unknown';
     
     // Log the result
-    const testDescription = getTestDescription(includeApiInName, includeVersionInName, singularizeResourceNames, path);
+    const testDescription = getTestDescription(includeApiInName, includeVersionInName, singularizeResourceNames, endpointPath);
     console.log(`${testDescription}: ${toolName}`);
     
     // Clean up temporary files

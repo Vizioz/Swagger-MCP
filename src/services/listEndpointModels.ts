@@ -17,123 +17,85 @@ export interface Model {
 export interface ListEndpointModelsParams {
   path: string;
   method: string;
+  swaggerFilePath: string; // Required path to the Swagger file
 }
 
 /**
  * Lists all models used by a specific endpoint from the Swagger definition
- * @param params Object containing path and method of the endpoint
+ * @param params Object containing path, method of the endpoint, and swagger file path
  * @returns Array of models used by the endpoint
  */
 async function listEndpointModels(params: ListEndpointModelsParams): Promise<Model[]> {
   try {
-    const { path: endpointPath, method } = params;
+    const { path: endpointPath, method, swaggerFilePath } = params;
     
-    // Read the .swagger-mcp file to get the Swagger filename
-    const swaggerConfigPath = path.resolve(process.cwd(), '.swagger-mcp');
-    const swaggerConfig = fs.readFileSync(swaggerConfigPath, 'utf8');
-    const swaggerFilenameMatch = swaggerConfig.match(/SWAGGER_FILENAME=(.+)/);
-    
-    if (!swaggerFilenameMatch) {
-      throw new Error('Swagger filename not found in .swagger-mcp file');
+    if (!swaggerFilePath) {
+      throw new Error('Swagger file path is required');
     }
     
-    const swaggerFilename = swaggerFilenameMatch[1].trim();
-    const swaggerFilePath = path.resolve(process.cwd(), swaggerFilename);
+    if (!fs.existsSync(swaggerFilePath)) {
+      throw new Error(`Swagger file not found at ${swaggerFilePath}`);
+    }
     
     // Read the Swagger definition file
     logger.info(`Reading Swagger definition from ${swaggerFilePath}`);
     const swaggerContent = fs.readFileSync(swaggerFilePath, 'utf8');
     const swaggerDefinition = JSON.parse(swaggerContent);
     
-    const models: Model[] = [];
-    const processedRefs = new Set<string>(); // To avoid processing the same ref multiple times
+    // Check if the endpoint exists
+    const paths = swaggerDefinition.paths || {};
+    const pathItem = paths[endpointPath];
     
-    // Handle OpenAPI 3.0.x format
-    if (swaggerDefinition.openapi && swaggerDefinition.openapi.startsWith('3.')) {
-      const paths = swaggerDefinition.paths || {};
-      const pathItem = paths[endpointPath];
+    if (!pathItem) {
+      throw new Error(`Endpoint path '${endpointPath}' not found in Swagger definition`);
+    }
+    
+    const operation = pathItem[method.toLowerCase()];
+    
+    if (!operation) {
+      throw new Error(`Method '${method}' not found for endpoint path '${endpointPath}'`);
+    }
+    
+    // Extract models
+    const models: Model[] = [];
+    const processedRefs = new Set<string>();
+    
+    // Process request body
+    if (operation.requestBody) {
+      const content = operation.requestBody.content || {};
       
-      if (!pathItem) {
-        throw new Error(`Path ${endpointPath} not found in Swagger definition`);
+      for (const mediaType in content) {
+        const mediaTypeObj = content[mediaType];
+        
+        if (mediaTypeObj.schema) {
+          extractReferencedModels(mediaTypeObj.schema, models, processedRefs, swaggerDefinition);
+        }
       }
-      
-      const operation = pathItem[method.toLowerCase()];
-      
-      if (!operation) {
-        throw new Error(`Method ${method} not found for path ${endpointPath}`);
+    }
+    
+    // Process parameters
+    if (operation.parameters) {
+      for (const parameter of operation.parameters) {
+        if (parameter.schema) {
+          extractReferencedModels(parameter.schema, models, processedRefs, swaggerDefinition);
+        }
       }
-      
-      // Process request body
-      if (operation.requestBody && operation.requestBody.content) {
-        for (const contentType in operation.requestBody.content) {
-          const mediaType = operation.requestBody.content[contentType];
-          if (mediaType.schema) {
-            extractReferencedModels(mediaType.schema, models, processedRefs, swaggerDefinition);
+    }
+    
+    // Process responses
+    if (operation.responses) {
+      for (const statusCode in operation.responses) {
+        const response = operation.responses[statusCode];
+        const content = response.content || {};
+        
+        for (const mediaType in content) {
+          const mediaTypeObj = content[mediaType];
+          
+          if (mediaTypeObj.schema) {
+            extractReferencedModels(mediaTypeObj.schema, models, processedRefs, swaggerDefinition);
           }
         }
       }
-      
-      // Process parameters
-      if (operation.parameters) {
-        for (const param of operation.parameters) {
-          if (param.schema) {
-            extractReferencedModels(param.schema, models, processedRefs, swaggerDefinition);
-          }
-        }
-      }
-      
-      // Process responses
-      if (operation.responses) {
-        for (const statusCode in operation.responses) {
-          const response = operation.responses[statusCode];
-          if (response.content) {
-            for (const contentType in response.content) {
-              const mediaType = response.content[contentType];
-              if (mediaType.schema) {
-                extractReferencedModels(mediaType.schema, models, processedRefs, swaggerDefinition);
-              }
-            }
-          }
-        }
-      }
-    } 
-    // Handle Swagger 2.0 format
-    else if (swaggerDefinition.swagger && swaggerDefinition.swagger.startsWith('2.')) {
-      const paths = swaggerDefinition.paths || {};
-      const pathItem = paths[endpointPath];
-      
-      if (!pathItem) {
-        throw new Error(`Path ${endpointPath} not found in Swagger definition`);
-      }
-      
-      const operation = pathItem[method.toLowerCase()];
-      
-      if (!operation) {
-        throw new Error(`Method ${method} not found for path ${endpointPath}`);
-      }
-      
-      // Process parameters
-      if (operation.parameters) {
-        for (const param of operation.parameters) {
-          if (param.schema) {
-            extractReferencedModels(param.schema, models, processedRefs, swaggerDefinition);
-          } else if (param.type === 'array' && param.items) {
-            extractReferencedModels(param.items, models, processedRefs, swaggerDefinition);
-          }
-        }
-      }
-      
-      // Process responses
-      if (operation.responses) {
-        for (const statusCode in operation.responses) {
-          const response = operation.responses[statusCode];
-          if (response.schema) {
-            extractReferencedModels(response.schema, models, processedRefs, swaggerDefinition);
-          }
-        }
-      }
-    } else {
-      throw new Error('Unsupported Swagger/OpenAPI version');
     }
     
     return models;

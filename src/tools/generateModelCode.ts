@@ -16,9 +16,13 @@ export const generateModelCode = {
       modelName: {
         type: "string",
         description: "The name of the model to generate code for"
+      },
+      swaggerFilePath: {
+        type: "string",
+        description: "Path to the Swagger file. This should be the full file path that was saved in the .swagger-mcp file after calling getSwaggerDefinition. You can find this path in the .swagger-mcp file in the solution root with the format SWAGGER_FILEPATH=path/to/file.json."
       }
     },
-    required: ["modelName"]
+    required: ["modelName", "swaggerFilePath"]
   }
 };
 

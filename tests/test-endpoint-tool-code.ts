@@ -14,6 +14,7 @@ import generateEndpointToolCode from '../build/services/generateEndpointToolCode
 interface GenerateEndpointToolCodeParams {
   path: string;
   method: string;
+  swaggerFilePath: string;
   includeApiInName?: boolean;
   includeVersionInName?: boolean;
   singularizeResourceNames?: boolean;
@@ -23,78 +24,89 @@ async function testGenerateEndpointToolCode(): Promise<void> {
   try {
     console.log('Testing generateEndpointToolCode with different naming options...');
     
+    // Use the mock Swagger file for testing
+    const swaggerFilePath = path.join(__dirname, 'mock-swagger.json');
+    
     // Example endpoint from the Swagger definition
-    const endpoint: Pick<GenerateEndpointToolCodeParams, 'path' | 'method'> = {
+    const endpoint = {
       path: '/projects/api/v3/tasks.json',
-      method: 'GET'
+      method: 'GET',
+      swaggerFilePath
     };
     
-    // Test with default options (no API, no version, singularize)
-    console.log('\n1. Default options (no API, no version, singularize):');
-    const defaultParams: GenerateEndpointToolCodeParams = {
+    // Test with default options
+    console.log('\nTest 1: Default options');
+    console.log(`Testing with endpoint: ${endpoint.method} ${endpoint.path}`);
+    
+    const params1: GenerateEndpointToolCodeParams = {
       ...endpoint,
       includeApiInName: false,
       includeVersionInName: false,
       singularizeResourceNames: true
     };
     
-    console.log(`Testing with parameters:`, defaultParams);
-    const defaultCode = await generateEndpointToolCode(defaultParams);
-    saveGeneratedCode(defaultCode, 'generated-endpoint-tool-default.ts');
+    const tsCode1 = await generateEndpointToolCode(params1);
+    console.log('Generated TypeScript code (default options):');
+    console.log('--------------------------------------------------');
+    console.log(tsCode1);
+    console.log('--------------------------------------------------');
     
-    // Test with API included
-    console.log('\n2. Include API in name:');
-    const includeApiParams: GenerateEndpointToolCodeParams = {
+    saveGeneratedCode(tsCode1, 'default-options.ts');
+    
+    // Test with includeApiInName = true
+    console.log('\nTest 2: Include API in name');
+    
+    const params2: GenerateEndpointToolCodeParams = {
       ...endpoint,
       includeApiInName: true,
       includeVersionInName: false,
       singularizeResourceNames: true
     };
     
-    console.log(`Testing with parameters:`, includeApiParams);
-    const includeApiCode = await generateEndpointToolCode(includeApiParams);
-    saveGeneratedCode(includeApiCode, 'generated-endpoint-tool-with-api.ts');
+    const tsCode2 = await generateEndpointToolCode(params2);
+    console.log('Generated TypeScript code (includeApiInName = true):');
+    console.log('--------------------------------------------------');
+    console.log(tsCode2);
+    console.log('--------------------------------------------------');
     
-    // Test with version included
-    console.log('\n3. Include version in name:');
-    const includeVersionParams: GenerateEndpointToolCodeParams = {
+    saveGeneratedCode(tsCode2, 'include-api.ts');
+    
+    // Test with includeVersionInName = true
+    console.log('\nTest 3: Include version in name');
+    
+    const params3: GenerateEndpointToolCodeParams = {
       ...endpoint,
       includeApiInName: false,
       includeVersionInName: true,
       singularizeResourceNames: true
     };
     
-    console.log(`Testing with parameters:`, includeVersionParams);
-    const includeVersionCode = await generateEndpointToolCode(includeVersionParams);
-    saveGeneratedCode(includeVersionCode, 'generated-endpoint-tool-with-version.ts');
+    const tsCode3 = await generateEndpointToolCode(params3);
+    console.log('Generated TypeScript code (includeVersionInName = true):');
+    console.log('--------------------------------------------------');
+    console.log(tsCode3);
+    console.log('--------------------------------------------------');
     
-    // Test with both API and version included
-    console.log('\n4. Include both API and version in name:');
-    const includeApiAndVersionParams: GenerateEndpointToolCodeParams = {
-      ...endpoint,
-      includeApiInName: true,
-      includeVersionInName: true,
-      singularizeResourceNames: true
-    };
+    saveGeneratedCode(tsCode3, 'include-version.ts');
     
-    console.log(`Testing with parameters:`, includeApiAndVersionParams);
-    const includeApiAndVersionCode = await generateEndpointToolCode(includeApiAndVersionParams);
-    saveGeneratedCode(includeApiAndVersionCode, 'generated-endpoint-tool-with-api-and-version.ts');
+    // Test with singularizeResourceNames = false
+    console.log('\nTest 4: Don\'t singularize resource names');
     
-    // Test without singularization
-    console.log('\n5. Without singularization:');
-    const noSingularizeParams: GenerateEndpointToolCodeParams = {
+    const params4: GenerateEndpointToolCodeParams = {
       ...endpoint,
       includeApiInName: false,
       includeVersionInName: false,
       singularizeResourceNames: false
     };
     
-    console.log(`Testing with parameters:`, noSingularizeParams);
-    const noSingularizeCode = await generateEndpointToolCode(noSingularizeParams);
-    saveGeneratedCode(noSingularizeCode, 'generated-endpoint-tool-no-singularize.ts');
+    const tsCode4 = await generateEndpointToolCode(params4);
+    console.log('Generated TypeScript code (singularizeResourceNames = false):');
+    console.log('--------------------------------------------------');
+    console.log(tsCode4);
+    console.log('--------------------------------------------------');
     
-    console.log('\nAll tests completed. Check the generated files for results.');
+    saveGeneratedCode(tsCode4, 'no-singularize.ts');
+    
   } catch (error: any) {
     console.error('Error testing generateEndpointToolCode:', error);
     if (error.stack) {
@@ -104,26 +116,20 @@ async function testGenerateEndpointToolCode(): Promise<void> {
 }
 
 function saveGeneratedCode(code: string, filename: string): void {
-  // Ensure the generated directory exists
-  const generatedDir = path.join(__dirname, 'generated');
-  if (!fs.existsSync(generatedDir)) {
-    fs.mkdirSync(generatedDir, { recursive: true });
-  }
-  
-  const outputPath = path.join(generatedDir, filename);
-  fs.writeFileSync(outputPath, code);
-  console.log(`Generated code saved to: ${outputPath}`);
-  
-  // Extract the tool name from the code for display
-  const toolNameMatch = code.match(/export const (\w+) = {/);
-  if (toolNameMatch && toolNameMatch[1]) {
-    console.log(`Generated tool name: ${toolNameMatch[1]}`);
-  }
-  
-  // Extract the handler function name
-  const handlerMatch = code.match(/export async function handle(\w+)\(input: any\) {/);
-  if (handlerMatch && handlerMatch[1]) {
-    console.log(`Generated handler function: handle${handlerMatch[1]}`);
+  try {
+    // Save the generated code to a file for easier viewing
+    const outputDir = path.join(__dirname, 'generated');
+    
+    // Ensure the directory exists
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+    
+    const outputPath = path.join(outputDir, filename);
+    fs.writeFileSync(outputPath, code);
+    console.log(`Generated code saved to: ${outputPath}`);
+  } catch (error: any) {
+    console.error(`Error saving generated code: ${error.message}`);
   }
 }
 

@@ -10,6 +10,8 @@ An MCP server that connects to a Swagger specification and helps an AI to build 
 - Returns a model
 - Returns service to connect to the end point
 - Returns MCP function definitions
+- Generates complete MCP tool definitions with full schema information
+- Includes AI-specific instructions in tool descriptions
 
 ## Prerequisites
 
@@ -37,7 +39,7 @@ npm install
 cp .env.example .env
 ```
 
-1. Update the `.env` file.
+4. Update the `.env` file.
 
 ## Configuration
 
@@ -92,6 +94,12 @@ The Swagger MCP tools will now be available to the Cursor Agent in Composer.
 
 The following tools are available through the MCP server:
 
+- `getSwaggerDefinition`: Downloads a Swagger definition from a URL
+- `listEndpoints`: Lists all endpoints from the Swagger definition
+- `listEndpointModels`: Lists all models used by a specific endpoint
+- `generateModelCode`: Generates TypeScript code for a model
+- `generateEndpointToolCode`: Generates TypeScript code for an MCP tool definition
+
 ## Setting Up Your New Project
 
 First ask the agent to get the Swagger file, make sure you give it the URL for the swagger file, or at least a way to find it for you, this will download the file and save it locally with a hashed filename, this filename will automatically be added to a `.swagger-mcp` settings file in the root of your current solution.
@@ -105,6 +113,45 @@ SWAGGER_FILENAME = TheFilenameOfTheLocallyStoredSwaggerFile
 This simple configuration file associates your current project with a specific Swagger API, we may use it to store more details in the future.
 
 Once configured, the MCP will be able to find your Swagger definition and associate it with your current solution, reducing the number of API calls needed to get the project and tasks related to the solution you are working on.
+
+## Improved MCP Tool Code Generator
+
+The MCP tool code generator has been enhanced to provide more complete and usable tool definitions:
+
+### Key Improvements
+
+1. **Complete Schema Information**: The generator now includes full schema information for all models, including nested objects, directly in the inputSchema.
+
+2. **Better Parameter Naming**: Parameter names are now more semantic and avoid problematic characters like dots (e.g., `taskRequest` instead of `task.Request`).
+
+3. **Semantic Tool Names**: Tool names are now more descriptive and follow consistent naming conventions based on the HTTP method and resource path.
+
+4. **Support for YAML Swagger Files**: The generator now supports both JSON and YAML Swagger definition files.
+
+5. **Improved Documentation**: Generated tool definitions include comprehensive descriptions for all parameters and properties.
+
+6. **No External Dependencies**: The generated code doesn't require importing external model files, making it more self-contained and easier to use.
+
+7. **AI-Specific Instructions**: Tool descriptions now include special instructions for AI agents, helping them understand how to use the tools effectively.
+
+### Example Usage
+
+To generate an MCP tool definition for an endpoint:
+
+```typescript
+import generateEndpointToolCode from './services/generateEndpointToolCode.js';
+
+const toolCode = await generateEndpointToolCode({
+  path: '/pets',
+  method: 'POST',
+  swaggerFilePath: './petstore.json',
+  singularizeResourceNames: true
+});
+
+console.log(toolCode);
+```
+
+This will generate a complete MCP tool definition with full schema information for the POST /pets endpoint.
 
 ## License
 

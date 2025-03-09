@@ -21,6 +21,10 @@ export const generateEndpointToolCode = {
         type: "string",
         description: "The HTTP method of the endpoint (e.g. GET, POST, PUT, DELETE)"
       },
+      swaggerFilePath: {
+        type: "string",
+        description: "Path to the Swagger file. This should be the full file path that was saved in the .swagger-mcp file after calling getSwaggerDefinition. You can find this path in the .swagger-mcp file in the solution root with the format SWAGGER_FILEPATH=path/to/file.json."
+      },
       includeApiInName: {
         type: "boolean",
         description: "Whether to include 'api' segments in the generated tool name (default: false)"
@@ -34,7 +38,7 @@ export const generateEndpointToolCode = {
         description: "Whether to singularize resource names in the generated tool name (default: true)"
       }
     },
-    required: ["path", "method"]
+    required: ["path", "method", "swaggerFilePath"]
   }
 };
 

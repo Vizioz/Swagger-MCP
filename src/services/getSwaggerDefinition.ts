@@ -7,16 +7,19 @@ import path from 'path';
 
 /**
  * Fetches Swagger definition
- * @param params Optional query parameters for filtering projects
- * @returns The API response with project data
+ * @param params Parameters including URL and save location
+ * @returns The saved Swagger definition information
  */
-export const getSwaggerDefinition = async (params?: GetSwaggerParams) => {
+export const getSwaggerDefinition = async (params: GetSwaggerParams) => {
   try {
-    logger.info('Fetching Swagger definition from ' + params?.url);
-    if (!params?.url) {
+    logger.info('Fetching Swagger definition from ' + params.url);
+    if (!params.url) {
       throw new Error('URL is required');
     }
-    const response = await axios.get(params?.url);
+    if (!params.saveLocation) {
+      throw new Error('Save location is required');
+    }
+    const response = await axios.get(params.url);
 
     // If the response is not a valid Swagger definition, throw an error
     if (!response.data.openapi && !response.data.swagger) {
@@ -25,14 +28,24 @@ export const getSwaggerDefinition = async (params?: GetSwaggerParams) => {
     }
 
     // If the response is a valid Swagger definition, save it as a hashed filename of the URL
-    const url = new URL(params?.url);
+    const url = new URL(params.url);
     const filename = crypto.createHash('sha256').update(url.toString()).digest('hex') + '.json';
-    const filePath = path.join(process.cwd(), filename);
+    
+    // Use the provided save location
+    const saveLocation = params.saveLocation;
+    const filePath = path.join(saveLocation, filename);
+    
+    // Ensure the directory exists
+    const directory = path.dirname(filePath);
+    if (!fs.existsSync(directory)) {
+      fs.mkdirSync(directory, { recursive: true });
+    }
+    
     fs.writeFileSync(filePath, JSON.stringify(response.data, null, 2));
 
     const savedSwaggerDefinition: SavedSwaggerDefinition = {
-      filename: filename,
-      url: params?.url,
+      filePath: filePath, // Full path to the saved file
+      url: params.url,
       type: response.data.openapi ? 'openapi' : 'swagger'
     };
     // Return the Swagger definition

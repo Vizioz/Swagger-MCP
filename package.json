@@ -36,9 +36,11 @@
   "homepage": "https://github.com/readingdancer/swagger-mcp#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.1",
+    "@types/js-yaml": "^4.0.9",
     "@types/minimist": "^1.2.5",
     "axios": "^1.6.7",
     "dotenv": "^16.4.5",
+    "js-yaml": "^4.1.0",
     "minimist": "^1.2.8",
     "winston": "^3.12.0"
   },

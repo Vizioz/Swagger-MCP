@@ -10,60 +10,53 @@ import logger from '../utils/logger.js';
 // Interface for the function parameters
 export interface GenerateModelCodeParams {
   modelName: string;
+  swaggerFilePath: string; // Required path to the Swagger file
 }
 
 /**
  * Generates TypeScript code for a model from the Swagger definition
- * @param params Object containing the model name
+ * @param params Object containing the model name and swagger file path
  * @returns TypeScript code for the model
  */
 async function generateModelCode(params: GenerateModelCodeParams): Promise<string> {
   try {
-    const { modelName } = params;
+    const { modelName, swaggerFilePath } = params;
     
-    // Read the .swagger-mcp file to get the Swagger filename
-    const swaggerConfigPath = path.resolve(process.cwd(), '.swagger-mcp');
-    const swaggerConfig = fs.readFileSync(swaggerConfigPath, 'utf8');
-    const swaggerFilenameMatch = swaggerConfig.match(/SWAGGER_FILENAME=(.+)/);
-    
-    if (!swaggerFilenameMatch) {
-      throw new Error('Swagger filename not found in .swagger-mcp file');
+    if (!swaggerFilePath) {
+      throw new Error('Swagger file path is required');
     }
     
-    const swaggerFilename = swaggerFilenameMatch[1].trim();
-    const swaggerFilePath = path.resolve(process.cwd(), swaggerFilename);
+    if (!fs.existsSync(swaggerFilePath)) {
+      throw new Error(`Swagger file not found at ${swaggerFilePath}`);
+    }
     
     // Read the Swagger definition file
     logger.info(`Reading Swagger definition from ${swaggerFilePath}`);
     const swaggerContent = fs.readFileSync(swaggerFilePath, 'utf8');
     const swaggerDefinition = JSON.parse(swaggerContent);
     
-    // Find the model in the Swagger definition
-    let modelSchema: any = null;
+    // Find the model schema
+    let modelSchema = null;
     
-    // Handle OpenAPI 3.0.x format
+    // Check if it's OpenAPI 3.0.x
     if (swaggerDefinition.openapi && swaggerDefinition.openapi.startsWith('3.')) {
-      if (swaggerDefinition.components && swaggerDefinition.components.schemas) {
-        modelSchema = swaggerDefinition.components.schemas[modelName];
-      }
+      const schemas = swaggerDefinition.components?.schemas || {};
+      modelSchema = schemas[modelName];
     } 
-    // Handle Swagger 2.0 format
+    // Check if it's Swagger 2.0
     else if (swaggerDefinition.swagger && swaggerDefinition.swagger.startsWith('2.')) {
-      if (swaggerDefinition.definitions) {
-        modelSchema = swaggerDefinition.definitions[modelName];
-      }
-    } else {
-      throw new Error('Unsupported Swagger/OpenAPI version');
+      const definitions = swaggerDefinition.definitions || {};
+      modelSchema = definitions[modelName];
     }
     
     if (!modelSchema) {
-      throw new Error(`Model ${modelName} not found in Swagger definition`);
+      throw new Error(`Model '${modelName}' not found in Swagger definition`);
     }
     
-    // Generate TypeScript code for the model
-    const tsCode = generateTypeScriptInterface(modelName, modelSchema, swaggerDefinition);
+    // Generate TypeScript code
+    const typeScriptCode = generateTypeScriptInterface(modelName, modelSchema, swaggerDefinition);
     
-    return tsCode;
+    return typeScriptCode;
   } catch (error: any) {
     logger.error(`Error generating model code: ${error.message}`);
     throw error;
