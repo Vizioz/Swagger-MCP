@@ -44,3 +44,9 @@ ReferenceFiles/
 
 # Test generated files
 tests/generated/
+
+# Ignore the test.json file
+test.json
+
+# Ignore my todo notepad file
+TodoNotepad
