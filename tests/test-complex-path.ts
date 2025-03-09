@@ -8,9 +8,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Import the generateEndpointToolCode function
-import generateEndpointToolCode from './build/services/generateEndpointToolCode.js';
+import generateEndpointToolCode from '../build/services/generateEndpointToolCode.js';
 
-async function testComplexPath() {
+interface EndpointParams {
+  path: string;
+  method: string;
+  includeApiInName: boolean;
+  includeVersionInName: boolean;
+  singularizeResourceNames: boolean;
+}
+
+async function testComplexPath(): Promise<void> {
   try {
     console.log('Testing generateEndpointToolCode with a complex path...');
     
@@ -22,7 +30,7 @@ async function testComplexPath() {
     
     // Test with default options (no API, no version, singularize)
     console.log('\nComplex path with singularization:');
-    const params = {
+    const params: EndpointParams = {
       ...endpoint,
       includeApiInName: false,
       includeVersionInName: false,
@@ -31,10 +39,10 @@ async function testComplexPath() {
     
     console.log(`Testing with parameters:`, params);
     const code = await generateEndpointToolCode(params);
-    saveGeneratedCode(code, 'generated-complex-path.ts');
+    saveGeneratedCode(code, 'generated/generated-complex-path.ts');
     
     console.log('\nTest completed. Check the generated file for results.');
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error testing complex path:', error);
     if (error.stack) {
       console.error(error.stack);
@@ -42,7 +50,7 @@ async function testComplexPath() {
   }
 }
 
-function saveGeneratedCode(code, filename) {
+function saveGeneratedCode(code: string, filename: string): void {
   const outputPath = path.join(__dirname, filename);
   fs.writeFileSync(outputPath, code);
   console.log(`Generated code saved to: ${outputPath}`);

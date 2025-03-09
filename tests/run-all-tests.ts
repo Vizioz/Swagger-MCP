@@ -17,7 +17,12 @@ const tsTests: string[] = [
   'test-endpoint-tool-code.ts',
   'test-format-suffix-mock.ts',
   'test-calendar-events.ts',
-  'test-combined-features.ts'
+  'test-combined-features.ts',
+  'test-complex-path.ts',
+  'test-endpoint-models.ts',
+  'test-endpoints.ts',
+  'test-model-code.ts',
+  'test-tool-name.ts'
 ];
 
 // Run JavaScript tests

@@ -8,14 +8,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Import the generateModelCode function
-import generateModelCode from './build/services/generateModelCode.js';
+import generateModelCode from '../build/services/generateModelCode.js';
 
-async function testGenerateModelCode() {
+interface ModelParams {
+  modelName: string;
+}
+
+async function testGenerateModelCode(): Promise<void> {
   try {
     console.log('Testing generateModelCode...');
     
     // Example model from the Swagger definition
-    const params = {
+    const params: ModelParams = {
       modelName: 'view.TaskV205'
     };
     
@@ -28,10 +32,10 @@ async function testGenerateModelCode() {
     console.log('--------------------------------------------------');
     
     // Save the generated code to a file for easier viewing
-    const outputPath = path.join(__dirname, 'generated-model.ts');
+    const outputPath = path.join(__dirname, 'generated/generated-model.ts');
     fs.writeFileSync(outputPath, tsCode);
     console.log(`Generated code saved to: ${outputPath}`);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error testing generateModelCode:', error);
     if (error.stack) {
       console.error(error.stack);

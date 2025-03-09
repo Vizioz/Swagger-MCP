@@ -8,16 +8,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Import the listEndpoints function
-import listEndpoints from './build/services/listEndpoints.js';
+import listEndpoints from '../build/services/listEndpoints.js';
 
-async function testListEndpoints() {
+async function testListEndpoints(): Promise<void> {
   try {
     console.log('Testing listEndpoints...');
     const endpoints = await listEndpoints();
     console.log('Endpoints:');
     console.log(JSON.stringify(endpoints, null, 2));
     console.log(`Found ${endpoints.length} endpoints.`);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error testing listEndpoints:', error);
   }
 }

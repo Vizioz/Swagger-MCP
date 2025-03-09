@@ -1,5 +1,5 @@
-const request = require('supertest');
-const app = require('../src/index');
+import request from 'supertest';
+import app from '../src/index';
 
 describe('Server', () => {
   it('should respond to health check', async () => {
@@ -7,4 +7,4 @@ describe('Server', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('status', 'ok');
   });
-});
+}); 

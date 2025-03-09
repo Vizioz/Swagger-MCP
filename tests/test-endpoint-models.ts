@@ -8,14 +8,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Import the listEndpointModels function
-import listEndpointModels from './build/services/listEndpointModels.js';
+import listEndpointModels from '../build/services/listEndpointModels.js';
 
-async function testListEndpointModels() {
+interface EndpointParams {
+  path: string;
+  method: string;
+}
+
+async function testListEndpointModels(): Promise<void> {
   try {
     console.log('Testing listEndpointModels...');
     
     // Example endpoint from the Swagger definition
-    const params = {
+    const params: EndpointParams = {
       path: '/projects/api/v3/tasks.json',
       method: 'GET'
     };
@@ -26,7 +31,7 @@ async function testListEndpointModels() {
     console.log('Models:');
     console.log(JSON.stringify(models, null, 2));
     console.log(`Found ${models.length} models.`);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error testing listEndpointModels:', error);
   }
 }
