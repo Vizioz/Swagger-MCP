@@ -1,5 +1,5 @@
-// Test Improved Endpoint Tool Code Generator
-// This script tests the improved generator with the create task endpoint
+// Test Generator
+// This script tests the generator with the create task endpoint
 
 import fs from 'fs';
 import path from 'path';
@@ -9,11 +9,11 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Import the improved generator
-import improvedGenerateEndpointToolCode from './improved-generate-endpoint-tool-code.js';
+// Import the generator
+import generateEndpointToolCode from '../src/services/generateEndpointToolCode.js';
 
 // Define the interface here to avoid import issues
-interface ImprovedGenerateEndpointToolCodeParams {
+interface GenerateEndpointToolCodeParams {
   path: string;
   method: string;
   swaggerFilePath: string;
@@ -22,9 +22,9 @@ interface ImprovedGenerateEndpointToolCodeParams {
   singularizeResourceNames?: boolean;
 }
 
-async function testImprovedGenerator(): Promise<void> {
+async function testGenerator(): Promise<void> {
   try {
-    console.log('Testing improved endpoint tool code generator...');
+    console.log('Testing endpoint tool code generator...');
     
     // First, install the required dependencies if they're not already installed
     try {
@@ -57,7 +57,7 @@ async function testImprovedGenerator(): Promise<void> {
         console.log(`Trying POST endpoint: ${postPath}`);
         
         // Generate tool code with default options
-        const params: ImprovedGenerateEndpointToolCodeParams = {
+        const params: GenerateEndpointToolCodeParams = {
           path: postPath,
           method: 'POST',
           swaggerFilePath,
@@ -66,13 +66,13 @@ async function testImprovedGenerator(): Promise<void> {
           singularizeResourceNames: true
         };
         
-        const tsCode = await improvedGenerateEndpointToolCode(params);
+        const tsCode = await generateEndpointToolCode(params);
         
         // Save the generated code for inspection
-        const filename = `improved-create-task-mcp.ts`;
+        const filename = `create-task-mcp.ts`;
         saveGeneratedCode(tsCode, filename);
         
-        console.log(`\n✅ Successfully generated improved MCP definition for POST ${postPath}`);
+        console.log(`\n✅ Successfully generated MCP definition for POST ${postPath}`);
         console.log(`Check the file in tests/generated/${filename}`);
         
         // Break after the first successful endpoint
@@ -83,7 +83,7 @@ async function testImprovedGenerator(): Promise<void> {
       }
     }
   } catch (error: any) {
-    console.error('Error testing improved generator:', error);
+    console.error('Error testing generator:', error);
     if (error.stack) {
       console.error(error.stack);
     }
@@ -109,4 +109,4 @@ function saveGeneratedCode(code: string, filename: string): void {
 }
 
 // Run the test
-testImprovedGenerator(); 
+testGenerator(); 

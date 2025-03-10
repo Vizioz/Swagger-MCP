@@ -27,6 +27,7 @@ const tsTests: string[] = [
   'test-mcp-validation.ts',
   'test-create-task-validation.ts',
   // New tests
+  'test-generator.ts',
   'test-openapi-versions.ts',
   'test-authentication-support.ts',
   'test-file-operations.ts',

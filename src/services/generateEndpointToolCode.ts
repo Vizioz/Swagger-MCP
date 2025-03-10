@@ -58,7 +58,7 @@ async function generateEndpointToolCode(params: GenerateEndpointToolCodeParams):
     // Find the endpoint in the Swagger definition
     const endpoint = findEndpoint(swaggerDefinition, endpointPath, method);
     if (!endpoint) {
-      throw new Error(`Method '${method}' not found for endpoint path '${endpointPath}'`);
+      throw new Error(`Invalid or unsupported HTTP method '${method}' for endpoint path '${endpointPath}'`);
     }
     
     // Generate a tool name
@@ -111,7 +111,7 @@ function findEndpoint(swaggerDefinition: any, endpointPath: string, method: stri
   const endpoint = pathObj[method.toLowerCase()];
   
   if (!endpoint) {
-    throw new Error(`Method '${method}' not found for endpoint path '${endpointPath}'`);
+    throw new Error(`Invalid or unsupported HTTP method '${method}' for endpoint path '${endpointPath}'`);
   }
   
   return endpoint;

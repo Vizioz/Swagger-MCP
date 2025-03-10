@@ -10,8 +10,8 @@ import assert from 'assert';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Import the improved generator
-import improvedGenerateEndpointToolCode from './improved-generate-endpoint-tool-code.js';
+// Import the generator
+import generateEndpointToolCode from '../src/services/generateEndpointToolCode.js';
 
 // Define test swagger files for different OpenAPI versions
 const swaggerFiles = {
@@ -44,7 +44,7 @@ async function testOpenAPIVersions(): Promise<void> {
       const endpoint = testEndpoints[version as keyof typeof testEndpoints];
       
       // Generate tool code
-      const tsCode = await improvedGenerateEndpointToolCode({
+      const tsCode = await generateEndpointToolCode({
         path: endpoint.path,
         method: endpoint.method,
         swaggerFilePath,

@@ -3,6 +3,8 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
+  ListPromptsRequestSchema,
+  GetPromptRequestSchema
 } from "@modelcontextprotocol/sdk/types.js";
 
 import logger from "./utils/logger.js";
@@ -16,6 +18,9 @@ import { toolDefinitions,
   handleGenerateEndpointToolCode
 } from "./tools/index.js";
 
+// Import prompt definitions and handlers
+import { promptDefinitions, promptHandlers } from "./prompts/index.js";
+
 // Create MCP server
 const server = new Server(
   {
@@ -26,6 +31,7 @@ const server = new Server(
   {
     capabilities: {
       tools: {},
+      prompts: {}
     },
   }
 );
@@ -38,6 +44,59 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: toolDefinitions
   };
+});
+
+/**
+ * Handler that lists available prompts.
+ * Exposes prompts for guiding through common workflows.
+ */
+server.setRequestHandler(ListPromptsRequestSchema, async () => {
+  return {
+    prompts: promptDefinitions
+  };
+});
+
+/**
+ * Handler for getting a specific prompt.
+ * Returns the prompt template with messages.
+ */
+server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+  try {
+    const promptName = request.params.name;
+    const promptArgs = request.params.arguments || {};
+    
+    logger.info(`Prompt request received: ${promptName}`);
+    logger.info(`Prompt arguments: ${JSON.stringify(promptArgs)}`);
+    
+    const promptHandler = promptHandlers[promptName];
+    
+    if (!promptHandler) {
+      return {
+        error: {
+          code: -32601,
+          message: `Unknown prompt: ${promptName}`
+        }
+      };
+    }
+    
+    // Validate arguments against schema
+    const validationResult = promptHandler.schema.safeParse(promptArgs);
+    if (!validationResult.success) {
+      return {
+        error: {
+          code: -32602,
+          message: `Invalid arguments: ${validationResult.error.message}`
+        }
+      };
+    }
+    
+    // Call the prompt handler
+    const result = await promptHandler.handler(promptArgs);
+    return result;
+  } catch (error: any) {
+    logger.error(`MCP prompt error: ${error.message}`);
+    throw new Error(`Prompt execution failed: ${error.message}`);
+  }
 });
 
 /**

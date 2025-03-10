@@ -10,8 +10,8 @@ import assert from 'assert';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Import the improved generator
-import improvedGenerateEndpointToolCode from './improved-generate-endpoint-tool-code.js';
+// Import the generator
+import generateEndpointToolCode from '../src/services/generateEndpointToolCode.js';
 
 async function testFileOperations(): Promise<void> {
   console.log('Testing file upload/download operations in generated tool code...');
@@ -41,7 +41,7 @@ async function testFileOperations(): Promise<void> {
       console.log(`Testing ${testCase.operation} for ${testCase.method} ${testCase.path}`);
       
       // Generate tool code
-      const tsCode = await improvedGenerateEndpointToolCode({
+      const tsCode = await generateEndpointToolCode({
         path: testCase.path,
         method: testCase.method,
         swaggerFilePath,

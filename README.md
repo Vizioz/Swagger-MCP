@@ -100,6 +100,30 @@ The following tools are available through the MCP server:
 - `generateModelCode`: Generates TypeScript code for a model
 - `generateEndpointToolCode`: Generates TypeScript code for an MCP tool definition
 
+### Available Swagger MCP Prompts
+
+The server also provides MCP prompts that guide AI assistants through common workflows:
+
+- `add-endpoint`: A step-by-step guide for adding a new endpoint using the Swagger MCP tools
+
+To use a prompt, clients can make a `prompts/get` request with the prompt name and optional arguments:
+
+```json
+{
+  "method": "prompts/get",
+  "params": {
+    "name": "add-endpoint",
+    "arguments": {
+      "swaggerUrl": "https://petstore.swagger.io/v2/swagger.json",
+      "endpointPath": "/pets/{id}",
+      "httpMethod": "GET"
+    }
+  }
+}
+```
+
+The prompt will return a series of messages that guide the AI assistant through the exact process required to add a new endpoint.
+
 ## Setting Up Your New Project
 
 First ask the agent to get the Swagger file, make sure you give it the URL for the swagger file, or at least a way to find it for you, this will download the file and save it locally with a hashed filename, this filename will automatically be added to a `.swagger-mcp` settings file in the root of your current solution.
@@ -156,3 +180,11 @@ This will generate a complete MCP tool definition with full schema information f
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## MCP Prompts for AI Assistants
+
+To help AI assistants use the Swagger MCP tools effectively, we've created a collection of prompts that guide them through common tasks. These prompts provide step-by-step instructions for processes like adding new endpoints, using generated models, and more.
+
+Check out the [PROMPTS.md](./PROMPTS.md) file for the full collection of prompts.
+
+Example use case: When asking an AI assistant to add a new endpoint to your project, you can reference the "Adding a New Endpoint" prompt to ensure the assistant follows the correct process in the right order.

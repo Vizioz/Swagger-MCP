@@ -2,7 +2,6 @@
 
 ## Current Tasks
 
-- 🟥 Fix error handling test for invalid HTTP method - message doesn't match expected pattern
 - 🟥 Fix format-suffix-mock test extraction failure: "Could not extract getFormatSuffix function from source"
 - 🟨 Add support for authentication in generated tool handlers
 - 🟨 Improve error handling in generated tool handlers
@@ -12,6 +11,13 @@
 
 ## Completed Tasks
 
+### 03/09/2025
+
+- ✅ Add MCP prompt for guiding AI assistants through adding new endpoints
+- ✅ Add MCP prompts for guiding AI assistants through common workflows
+- ✅ Fix model code test failure - "Model 'Project' not found in Swagger definition"
+- ✅ Fix error handling test for invalid HTTP method - updated error message and used valid endpoint path
+- ✅ Remove improved-generate-endpoint-tool-code.ts and update tests to use the real generator
 - ✅ Fix endpoint path issues in projects-api-v3.oas2.yml for authentication and file operations tests:
 - ✅ Fix OpenAPI version compatibility tests - updated to check for 'inputSchema' instead of 'parameters'
 - ✅ Fix schema validation tests - updated endpoints to use ones that exist in the Swagger definition
@@ -21,6 +27,9 @@
 - ✅ Add validation for complex endpoint structures like Create Task
 - ✅ Implement validation for generated tool definitions against MCP schema
 - ✅ Fix the generateEndpointToolCode method to properly handle json.Unmarshaler interfaces in OpenAPI definitions
+
+### 03/08/2025
+
 - ✅ Implement improved MCP tool code generator with full schema information
 - ✅ Add support for YAML Swagger files
 - ✅ Improve parameter naming to avoid problematic characters

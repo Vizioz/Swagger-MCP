@@ -10,8 +10,8 @@ import assert from 'assert';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Import the improved generator
-import improvedGenerateEndpointToolCode from './improved-generate-endpoint-tool-code.js';
+// Import the generator
+import generateEndpointToolCode from '../src/services/generateEndpointToolCode.js';
 
 // Define a simple MCP schema validation function
 function validateAgainstMCPSchema(tsCode: string): { valid: boolean; errors: string[] } {
@@ -98,7 +98,7 @@ async function testSchemaValidation(): Promise<void> {
       console.log(`\nTesting schema validation for ${endpoint.method} ${endpoint.path}`);
       
       // Generate tool code
-      const tsCode = await improvedGenerateEndpointToolCode({
+      const tsCode = await generateEndpointToolCode({
         path: endpoint.path,
         method: endpoint.method,
         swaggerFilePath,

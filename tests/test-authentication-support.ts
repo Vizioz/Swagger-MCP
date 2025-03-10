@@ -10,8 +10,8 @@ import assert from 'assert';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Import the improved generator
-import improvedGenerateEndpointToolCode from './improved-generate-endpoint-tool-code.js';
+// Import the generator
+import generateEndpointToolCode from '../src/services/generateEndpointToolCode.js';
 
 async function testAuthenticationSupport(): Promise<void> {
   console.log('Testing authentication support in generated tool code...');
@@ -34,7 +34,7 @@ async function testAuthenticationSupport(): Promise<void> {
     console.log(`Testing authentication for ${method} ${path}`);
     
     // Generate tool code
-    const tsCode = await improvedGenerateEndpointToolCode({
+    const tsCode = await generateEndpointToolCode({
       path,
       method,
       swaggerFilePath,

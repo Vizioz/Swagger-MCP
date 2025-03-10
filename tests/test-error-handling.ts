@@ -10,8 +10,8 @@ import assert from 'assert';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Import the improved generator
-import improvedGenerateEndpointToolCode from './improved-generate-endpoint-tool-code.js';
+// Import the generator
+import generateEndpointToolCode from '../src/services/generateEndpointToolCode.js';
 
 async function testErrorHandling(): Promise<void> {
   console.log('Testing error handling in the generator...');
@@ -49,7 +49,7 @@ async function testErrorHandling(): Promise<void> {
     {
       name: 'Invalid HTTP method',
       params: {
-        path: '/projects/api/v3/me.json',
+        path: '/projects/api/v3/projects.json',
         method: 'INVALID_METHOD',
         swaggerFilePath: validSwaggerFilePath
       },
@@ -75,7 +75,7 @@ async function testErrorHandling(): Promise<void> {
     
     try {
       // Attempt to generate tool code with the test case parameters
-      const tsCode = await improvedGenerateEndpointToolCode(testCase.params as any);
+      const tsCode = await generateEndpointToolCode(testCase.params as any);
       
       // If we expected an error but didn't get one
       if (testCase.expectedError) {

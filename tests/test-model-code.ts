@@ -24,7 +24,7 @@ async function testGenerateModelCode(): Promise<void> {
     
     // Example model from the Swagger definition
     const params: ModelParams = {
-      modelName: 'Project',
+      modelName: 'project.FeatureOrder',
       swaggerFilePath
     };
     
