@@ -22,31 +22,49 @@ async function testGenerateModelCode(): Promise<void> {
     // Use the mock Swagger file for testing
     const swaggerFilePath = path.join(__dirname, '..', 'ReferenceFiles', 'projects-api-v3.oas2.yml');
     
-    // Example model from the Swagger definition
-    const params: ModelParams = {
-      modelName: 'project.FeatureOrder',
-      swaggerFilePath
-    };
+    // Test multiple models
+    const models = [
+      {
+        name: 'project.FeatureOrder',
+        description: 'Simple model (FeatureOrder)'
+      },
+      {
+        name: 'task.Request',
+        description: 'Complex model (Task Request)'
+      },
+      {
+        name: 'task.Task',
+        description: 'Core model (Task)'
+      }
+    ];
     
-    console.log(`Testing with model: ${params.modelName}`);
-    
-    const tsCode = await generateModelCode(params);
-    console.log('Generated TypeScript code:');
-    console.log('--------------------------------------------------');
-    console.log(tsCode);
-    console.log('--------------------------------------------------');
-    
-    // Save the generated code to a file for easier viewing
-    const outputPath = path.join(__dirname, 'generated/generated-model.ts');
-    
-    // Ensure the directory exists
-    const outputDir = path.dirname(outputPath);
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
+    for (const model of models) {
+      // Example model from the Swagger definition
+      const params: ModelParams = {
+        modelName: model.name,
+        swaggerFilePath
+      };
+      
+      console.log(`\nTesting with model: ${model.description} (${params.modelName})`);
+      
+      const tsCode = await generateModelCode(params);
+      console.log('Generated TypeScript code:');
+      console.log('--------------------------------------------------');
+      console.log(tsCode);
+      console.log('--------------------------------------------------');
+      
+      // Save the generated code to a file for easier viewing
+      const outputPath = path.join(__dirname, `generated/generated-model-${model.name.replace(/\./g, '-')}.ts`);
+      
+      // Ensure the directory exists
+      const outputDir = path.dirname(outputPath);
+      if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+      }
+      
+      fs.writeFileSync(outputPath, tsCode);
+      console.log(`Generated code saved to: ${outputPath}`);
     }
-    
-    fs.writeFileSync(outputPath, tsCode);
-    console.log(`Generated code saved to: ${outputPath}`);
   } catch (error: any) {
     console.error('Error testing generateModelCode:', error);
     if (error.stack) {
