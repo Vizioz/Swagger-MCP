@@ -179,7 +179,7 @@ This will generate a complete MCP tool definition with full schema information f
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
 ## MCP Prompts for AI Assistants
 
