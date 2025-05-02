@@ -157,18 +157,13 @@ function generateToolName(
     'identification': 'id',
     'parameter': 'param',
     'parameters': 'params',
-    'member': 'mbr',
-    'members': 'mbrs',
     'report': 'rpt',
-    'team': 'tm',
-    'teams': 'tms',
-    'management': 'mgmt',
     'configuration': 'config',
     'administrator': 'admin',
     'authentication': 'auth',
     'authorization': 'authz',
-    'notification': 'notif',
-    'notifications': 'notifs',
+    'notification': 'notify',
+    'notifications': 'notifys',
     'document': 'doc',
     'documents': 'docs',
     'category': 'cat',
@@ -179,12 +174,6 @@ function generateToolName(
     'preferences': 'prefs',
     'message': 'msg',
     'messages': 'msgs',
-    'service': 'svc',
-    'services': 'svcs',
-    'resource': 'res',
-    'resources': 'ress',
-    'account': 'acct',
-    'accounts': 'accts',
     'profile': 'prof',
     'profiles': 'profs',
     'setting': 'set',
@@ -228,9 +217,23 @@ function generateToolName(
       break;
     }
   }
+  // If the name exceeds 64 characters, try to make it meaningful
+  if (toolName.length > 64) {
+    // Try to shorten by removing less important segments
+    let reducedName = methodPrefix;
+    for (const segment of processedSegments) {
+      if ((reducedName + segment).length <= 64) {
+        reducedName += segment;
+      } else {
+        break;
+      }
+    }
+    return reducedName;
+  }
 
   return toolName;
 }
+
 
 /**
  * Generate the inputSchema for the tool
