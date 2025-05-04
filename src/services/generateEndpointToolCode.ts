@@ -128,14 +128,13 @@ function findEndpoint(swaggerDefinition: any, endpointPath: string, method: stri
  * @returns The generated tool name
  */
 function generateToolName(
-  method: string, 
-  path: string, 
+  method: string,
+  path: string,
   operationId?: string,
   includeApiInName = false,
   includeVersionInName = false,
   singularizeResourceNames = true
 ): string {
-  // Use a more semantic method prefix
   const methodPrefix = {
     'GET': 'get',
     'POST': 'create',
@@ -143,57 +142,105 @@ function generateToolName(
     'PATCH': 'update',
     'DELETE': 'delete'
   }[method.toUpperCase()] || method.toLowerCase();
-  
-  // If operationId is available and looks good, use it
+
+  const methodPrefixShort = {
+    'GET': 'get',
+    'POST': 'crt',
+    'PUT': 'upd',
+    'PATCH': 'upd',
+    'DELETE': 'del'
+  }[method.toUpperCase()] || method.toLowerCase();
+
+
   if (operationId && !operationId.includes('_') && !operationId.includes('.')) {
-    return operationId;
+    return operationId.substring(0, 64);
   }
-  
-  // Process the path to create a resource name
-  // Remove file extension and query parameters
+
+  const abbreviationMap: Record<string, string> = {
+    'organization': 'org',
+    'organizations': 'orgs',
+    'generate': 'gen',
+    'information': 'info',
+    'application': 'app',
+    'applications': 'apps',
+    'identification': 'id',
+    'parameter': 'param',
+    'parameters': 'params',
+    'report': 'rpt',
+    'configuration': 'config',
+    'administrator': 'admin',
+    'authentication': 'auth',
+    'authorization': 'authz',
+    'notification': 'notice',
+    'notifications': 'notices',
+    'document': 'doc',
+    'documents': 'docs',
+    'category': 'cat',
+    'categories': 'cats',
+    'subscription': 'sub',
+    'subscriptions': 'subs',
+    'preference': 'pref',
+    'preferences': 'prefs',
+    'message': 'msg',
+    'messages': 'msgs',
+    'profile': 'prof',
+    'profiles': 'profs',
+    'setting': 'set',
+    'settings': 'sets'
+  };
+
   let cleanPath = path.replace(/\.[^/.]+$/, '').split('?')[0];
-  
-  // Split the path into segments
   const segments = cleanPath.split('/').filter(Boolean);
-  
-  // Process each segment
+
   const processedSegments = segments.map((segment, index) => {
-    // Skip 'api' segments if not including them
     if (segment.toLowerCase() === 'api' && !includeApiInName) {
       return '';
     }
-    
-    // Skip version segments if not including them
+
     if (segment.match(/^v\d+$/) && !includeVersionInName) {
       return '';
     }
-    
-    // Handle path parameters (e.g., {id})
+
     if (segment.startsWith('{') && segment.endsWith('}')) {
-      // Convert {id} to Id
-      return segment.substring(1, segment.length - 1).charAt(0).toUpperCase() + 
-             segment.substring(1, segment.length - 1).slice(1);
+      const param = segment.substring(1, segment.length - 1);
+      return param.charAt(0).toUpperCase() + param.slice(1);
     }
-    
-    // Singularize resource names if requested
+
     let processedSegment = segment;
     if (singularizeResourceNames && index === segments.length - 1 && segment.endsWith('s')) {
-      // Simple singularization - remove trailing 's'
-      // This is a simplistic approach; a proper implementation would use a library like pluralize
-      processedSegment = segment.endsWith('ies') 
-        ? segment.slice(0, -3) + 'y'  // e.g., "companies" -> "company"
-        : segment.endsWith('s') 
-          ? segment.slice(0, -1)      // e.g., "tasks" -> "task"
-          : segment;
+      processedSegment = segment.endsWith('ies')
+        ? segment.slice(0, -3) + 'y'
+        : segment.slice(0, -1);
     }
-    
-    // Capitalize the first letter
-    return processedSegment.charAt(0).toUpperCase() + processedSegment.slice(1);
-  }).filter(Boolean); // Remove empty segments
-  
-  // Combine the method prefix and processed segments
-  return methodPrefix + processedSegments.join('');
+
+    const shortSegment = abbreviationMap[processedSegment.toLowerCase()] || processedSegment;
+
+    return shortSegment.charAt(0).toUpperCase() + shortSegment.slice(1);
+  }).filter(Boolean);
+
+  // Combine the method prefix and segments
+  let toolName = methodPrefix;
+  for (const segment of processedSegments) {
+    toolName += segment;
+  }
+
+  // If the name exceeds 64 characters, try to make it meaningful
+  if (toolName.length > 64) {
+    // Try to shorten by removing less important segments
+    let reducedName = methodPrefixShort;
+    for (const segment of processedSegments) {
+      if ((reducedName + segment).length <= 64) {
+        reducedName += segment;
+      } else {
+        break;
+      }
+    }
+    return reducedName;
+  }
+
+  return toolName;
 }
+
 
 /**
  * Generate the inputSchema for the tool
