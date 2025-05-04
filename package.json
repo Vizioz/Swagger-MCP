@@ -1,12 +1,14 @@
 {
-  "name": "swagger-mcp",
+  "name": "@vizioz/swagger-mcp",
   "version": "1.0.0",
-  "description": "Fetch Swagger definition from a URL",
+  "description": "MCP server to help build an MCP Server wrapper around a Swagger / OpenAPI definition",
   "type": "module",
   "bin": {
     "swagger-definition-fetcher": "./build/index.js"
   },
-  "scripts": {
+  "publishConfig": {
+    "access": "public"
+  },  "scripts": {
     "build": "tsc && node -e \"require('fs').copyFileSync('.env', 'build/.env'); require('fs').chmodSync('build/index.js', '755')\"",
     "prepare": "npm run build",
     "watch": "tsc --watch",
@@ -18,7 +20,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/readingdancer/swagger-mcp.git"
+    "url": "git+https://github.com/vizioz/swagger-mcp.git"
   },
   "keywords": [
     "swagger",
@@ -31,14 +33,14 @@
   "author": "Chris Houston",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/readingdancer/swagger-mcp/issues"
+    "url": "https://github.com/vizioz/swagger-mcp/issues"
   },
-  "homepage": "https://github.com/readingdancer/swagger-mcp#readme",
+  "homepage": "https://github.com/vizioz/swagger-mcp#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.1",
     "@types/js-yaml": "^4.0.9",
     "@types/minimist": "^1.2.5",
-    "axios": "^1.6.7",
+    "axios": "^1.8.2",
     "dotenv": "^16.4.5",
     "js-yaml": "^4.1.0",
     "minimist": "^1.2.8",
