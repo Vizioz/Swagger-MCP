@@ -137,11 +137,20 @@ function generateToolName(
 ): string {
   const methodPrefix = {
     'GET': 'get',
+    'POST': 'create',
+    'PUT': 'update',
+    'PATCH': 'update',
+    'DELETE': 'delete'
+  }[method.toUpperCase()] || method.toLowerCase();
+
+  const methodPrefixShort = {
+    'GET': 'get',
     'POST': 'crt',
     'PUT': 'upd',
     'PATCH': 'upd',
     'DELETE': 'del'
   }[method.toUpperCase()] || method.toLowerCase();
+
 
   if (operationId && !operationId.includes('_') && !operationId.includes('.')) {
     return operationId.substring(0, 64);
@@ -162,8 +171,8 @@ function generateToolName(
     'administrator': 'admin',
     'authentication': 'auth',
     'authorization': 'authz',
-    'notification': 'notify',
-    'notifications': 'notifys',
+    'notification': 'notice',
+    'notifications': 'notices',
     'document': 'doc',
     'documents': 'docs',
     'category': 'cat',
@@ -209,18 +218,16 @@ function generateToolName(
     return shortSegment.charAt(0).toUpperCase() + shortSegment.slice(1);
   }).filter(Boolean);
 
+  // Combine the method prefix and segments
   let toolName = methodPrefix;
   for (const segment of processedSegments) {
-    if ((toolName + segment).length <= 64) {
-      toolName += segment;
-    } else {
-      break;
-    }
+    toolName += segment;
   }
+
   // If the name exceeds 64 characters, try to make it meaningful
   if (toolName.length > 64) {
     // Try to shorten by removing less important segments
-    let reducedName = methodPrefix;
+    let reducedName = methodPrefixShort;
     for (const segment of processedSegments) {
       if ((reducedName + segment).length <= 64) {
         reducedName += segment;
