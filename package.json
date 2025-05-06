@@ -4,11 +4,10 @@
   "description": "Fetch Swagger definition from a URL",
   "type": "module",
   "bin": {
-    "swagger-definition-fetcher": "./build/index.js"
+    "swagger-mcp": "./build/index.js"
   },
   "scripts": {
     "build": "tsc && node -e \"require('fs').copyFileSync('.env', 'build/.env'); require('fs').chmodSync('build/index.js', '755')\"",
-    "prepare": "npm run build",
     "watch": "tsc --watch",
     "inspector": "tsc && node -e \"require('fs').copyFileSync('.env', 'build/.env'); require('fs').chmodSync('build/index.js', '755')\" && npx @modelcontextprotocol/inspector build/index.js",
     "test": "npx tsx tests/run-all-tests.ts"
@@ -35,18 +34,18 @@
   },
   "homepage": "https://github.com/readingdancer/swagger-mcp#readme",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.6.1",
+    "@modelcontextprotocol/sdk": "^1.7.0",
     "@types/js-yaml": "^4.0.9",
     "@types/minimist": "^1.2.5",
-    "axios": "^1.6.7",
-    "dotenv": "^16.4.5",
-    "js-yaml": "^4.1.0",
+    "axios": "^1.8.3",
+    "dotenv": "^16.4.7",
+    "js-yaml": "^4.0.9",
     "minimist": "^1.2.8",
     "winston": "^3.12.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
-    "@types/node": "^22.10.0",
+    "@types/node": "^22.13.10",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"

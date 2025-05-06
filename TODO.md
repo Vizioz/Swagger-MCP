@@ -8,6 +8,13 @@
 - 🟨 Add support for file uploads and downloads
 - 🟨 Create a web UI for testing generated tool definitions
 - 🟨 Add support for generating complete MCP servers from Swagger definitions
+- 🟨 Implement proxy behavior in generated MCP servers to forward requests to the original REST API
+- 🟨 Integrate Zod for runtime input validation in generated handlers
+- 🟨 Add support for multiple transport modes: stdio, web (SSE), and StreamableHTTP
+- 🟨 Generate a complete Node.js project scaffold (tsconfig.json, package.json, entry point, .env.example, etc.) for each generated server (or add instructions to a prompt / cursor file)
+- 🟨 Implement auto-detection of base URL from OpenAPI spec if not explicitly provided
+- 🟨 Support configuration of all authentication types via environment variables
+- 🟨 Ensure all generated code is fully typed with TypeScript
 
 ## Completed Tasks
 
