@@ -69,6 +69,20 @@ To run as an MCP server for integration with Cursor and other applications:
 node build/index.js
 ```
 
+You can also provide a Swagger URL via CLI argument:
+
+```
+node build/index.js --swagger-url="https://petstore.swagger.io/v2/swagger.json"
+```
+
+Or using the alternative format:
+
+```
+node build/index.js --swaggerUrl="https://petstore.swagger.io/v2/swagger.json"
+```
+
+**Note**: The CLI `--swagger-url` argument takes priority over the `swaggerFilePath` parameter in tool calls. If both are provided, the CLI argument will be used.
+
 ### Using the MCP Inspector
 
 To run the MCP inspector for debugging:
@@ -85,20 +99,31 @@ To add this MCP server to Cursor:
 2. Click "+ Add New MCP Server"
 3. Enter a name for the server (e.g., "Swagger MCP")
 4. Select "stdio" as the transport type
-5. Enter the command to run the server: `node path/to/swagger-mcp/build/index.js` and then if needed, add the command line arguments as mentioned above.
+5. Enter the command to run the server:
+   - Basic: `node path/to/swagger-mcp/build/index.js`
+   - With Swagger URL: `node path/to/swagger-mcp/build/index.js --swagger-url="https://your-api-url/swagger.json"`
 6. Click "Add"
 
 The Swagger MCP tools will now be available to the Cursor Agent in Composer.
+
+**Tip**: If you provide the `--swagger-url` CLI argument when configuring the server, you won't need to provide `swaggerFilePath` in tool calls, making the tools easier to use.
 
 ### Available Swagger MCP Tools
 
 The following tools are available through the MCP server:
 
 - `getSwaggerDefinition`: Downloads a Swagger definition from a URL
-- `listEndpoints`: Lists all endpoints from the Swagger definition
-- `listEndpointModels`: Lists all models used by a specific endpoint
-- `generateModelCode`: Generates TypeScript code for a model
-- `generateEndpointToolCode`: Generates TypeScript code for an MCP tool definition
+- `listEndpoints`: Lists all endpoints from the Swagger definition (optional `swaggerFilePath`)
+- `listEndpointModels`: Lists all models used by a specific endpoint (optional `swaggerFilePath`)
+- `generateModelCode`: Generates TypeScript code for a model (optional `swaggerFilePath`)
+- `generateEndpointToolCode`: Generates TypeScript code for an MCP tool definition (optional `swaggerFilePath`)
+
+**Swagger Definition Priority**: The tools determine which Swagger definition to use based on this priority:
+1. CLI `--swagger-url` argument (if provided when starting the server)
+2. `swaggerFilePath` parameter (if provided in the tool call)
+3. Error if neither is available
+
+If you start the server with `--swagger-url`, you can omit the `swaggerFilePath` parameter in tool calls for convenience.
 
 ### Available Swagger MCP Prompts
 
@@ -126,17 +151,33 @@ The prompt will return a series of messages that guide the AI assistant through 
 
 ## Setting Up Your New Project
 
-First ask the agent to get the Swagger file, make sure you give it the URL for the swagger file, or at least a way to find it for you, this will download the file and save it locally with a hashed filename, this filename will automatically be added to a `.swagger-mcp` settings file in the root of your current solution.
+There are two ways to set up the Swagger definition for your project:
+
+### Method 1: Using CLI Argument (Recommended)
+
+Start the MCP server with the `--swagger-url` argument:
+
+```
+node build/index.js --swagger-url="https://your-api-url/swagger.json"
+```
+
+This automatically downloads and caches the Swagger definition. All tools will use this definition, and you won't need to provide `swaggerFilePath` in tool calls.
+
+### Method 2: Using getSwaggerDefinition Tool
+
+Alternatively, you can ask the agent to get the Swagger file using the `getSwaggerDefinition` tool. Make sure you provide the URL for the swagger file, or at least a way to find it. This will download the file and save it locally with a hashed filename. The filename will automatically be added to a `.swagger-mcp` settings file in the root of your current solution.
 
 ## Auto generated .swagger-mcp config file
 
+When using the `getSwaggerDefinition` tool (Method 2 above), a `.swagger-mcp` file is automatically created:
+
 ```
-SWAGGER_FILENAME = TheFilenameOfTheLocallyStoredSwaggerFile
+SWAGGER_FILEPATH = TheFullPathToTheLocallyStoredSwaggerFile
 ```
 
-This simple configuration file associates your current project with a specific Swagger API, we may use it to store more details in the future.
+This configuration file associates your current project with a specific Swagger API. We may use it to store more details in the future.
 
-Once configured, the MCP will be able to find your Swagger definition and associate it with your current solution, reducing the number of API calls needed to get the project and tasks related to the solution you are working on.
+Once configured, you can reference the Swagger file path from this config file when calling tools. However, if you use the CLI `--swagger-url` argument (Method 1), this config file is optional as the Swagger definition is automatically loaded.
 
 ## Improved MCP Tool Code Generator
 
@@ -165,10 +206,11 @@ To generate an MCP tool definition for an endpoint:
 ```typescript
 import generateEndpointToolCode from './services/generateEndpointToolCode.js';
 
+// If server was started with --swagger-url, swaggerFilePath is optional
 const toolCode = await generateEndpointToolCode({
   path: '/pets',
   method: 'POST',
-  swaggerFilePath: './petstore.json',
+  swaggerFilePath: './petstore.json', // Optional if --swagger-url was provided
   singularizeResourceNames: true
 });
 
@@ -176,6 +218,15 @@ console.log(toolCode);
 ```
 
 This will generate a complete MCP tool definition with full schema information for the POST /pets endpoint.
+
+**Note**: If you started the server with `--swagger-url`, you can omit the `swaggerFilePath` parameter:
+```typescript
+const toolCode = await generateEndpointToolCode({
+  path: '/pets',
+  method: 'POST',
+  singularizeResourceNames: true
+});
+```
 
 ## License
 

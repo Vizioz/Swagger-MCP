@@ -9,7 +9,7 @@ import swaggerService from "../services/index.js";
 // Tool definition
 export const generateEndpointToolCode = {
   name: "generateEndpointToolCode",
-  description: "Generates TypeScript code for an MCP tool definition based on a Swagger endpoint.",
+  description: "Generates TypeScript code for an MCP tool definition based on a Swagger endpoint. Priority: CLI --swagger-url > swaggerFilePath parameter.",
   inputSchema: {
     type: "object",
     properties: {
@@ -23,7 +23,7 @@ export const generateEndpointToolCode = {
       },
       swaggerFilePath: {
         type: "string",
-        description: "Path to the Swagger file. This should be the full file path that was saved in the .swagger-mcp file after calling getSwaggerDefinition. You can find this path in the .swagger-mcp file in the solution root with the format SWAGGER_FILEPATH=path/to/file.json."
+        description: "Optional path to the Swagger file. Used only if --swagger-url is not provided. You can find this path in the .swagger-mcp file in the solution root with the format SWAGGER_FILEPATH=path/to/file.json."
       },
       includeApiInName: {
         type: "boolean",
@@ -38,7 +38,7 @@ export const generateEndpointToolCode = {
         description: "Whether to singularize resource names in the generated tool name (default: true)"
       }
     },
-    required: ["path", "method", "swaggerFilePath"]
+    required: ["path", "method"]
   }
 };
 
@@ -46,11 +46,11 @@ export const generateEndpointToolCode = {
 export async function handleGenerateEndpointToolCode(input: any) {
   logger.info('Calling swaggerService.generateEndpointToolCode()');
   logger.info(`Query parameters: ${JSON.stringify(input)}`);
-  
+
   try {
     const tsCode = await swaggerService.generateEndpointToolCode(input);
     logger.info(`Generated TypeScript code for endpoint ${input.method} ${input.path}`);
-    
+
     // Check if the response is a validation error message (starts with "MCP Schema Validation Failed")
     if (tsCode.trim().startsWith('MCP Schema Validation Failed')) {
       logger.error('MCP schema validation failed');
@@ -62,7 +62,7 @@ export async function handleGenerateEndpointToolCode(input: any) {
         isError: true
       };
     }
-    
+
     return {
       content: [{
         type: "text",
