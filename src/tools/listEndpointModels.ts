@@ -9,7 +9,7 @@ import swaggerService from "../services/index.js";
 // Tool definition
 export const listEndpointModels = {
   name: "listEndpointModels",
-  description: "Lists all models used by a specific endpoint from the Swagger definition.",
+  description: "Lists all models used by a specific endpoint from the Swagger definition. Priority: CLI --swagger-url > swaggerFilePath parameter.",
   inputSchema: {
     type: "object",
     properties: {
@@ -23,10 +23,10 @@ export const listEndpointModels = {
       },
       swaggerFilePath: {
         type: "string",
-        description: "Path to the Swagger file. This should be the full file path that was saved in the .swagger-mcp file after calling getSwaggerDefinition. You can find this path in the .swagger-mcp file in the solution root with the format SWAGGER_FILEPATH=path/to/file.json."
+        description: "Optional path to the Swagger file. Used only if --swagger-url is not provided. You can find this path in the .swagger-mcp file in the solution root with the format SWAGGER_FILEPATH=path/to/file.json."
       }
     },
-    required: ["path", "method", "swaggerFilePath"]
+    required: ["path", "method"]
   }
 };
 
@@ -34,11 +34,11 @@ export const listEndpointModels = {
 export async function handleListEndpointModels(input: any) {
   logger.info('Calling swaggerService.listEndpointModels()');
   logger.info(`Query parameters: ${JSON.stringify(input)}`);
-  
+
   try {
     const models = await swaggerService.listEndpointModels(input);
     logger.info(`Models response: ${JSON.stringify(models).substring(0, 200)}...`);
-    
+
     return {
       content: [{
         type: "text",

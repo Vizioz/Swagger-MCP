@@ -1,8 +1,6 @@
 # Swagger MCP - TODO List
 
 ## Current Tasks
-
-- 🟥 Fix format-suffix-mock test extraction failure: "Could not extract getFormatSuffix function from source"
 - 🟨 Add support for authentication in generated tool handlers
 - 🟨 Improve error handling in generated tool handlers
 - 🟨 Add support for file uploads and downloads
@@ -17,6 +15,11 @@
 - 🟨 Ensure all generated code is fully typed with TypeScript
 
 ## Completed Tasks
+
+### 12/03/2025
+
+- ✅ Remove obsolete `test-format-suffix-mock.ts` test that referenced non-existent functions
+- ✅ Fix missing `getCachedSwaggerFilePath` helper function in `swaggerLoader.ts` (broken after accepting Copilot PR suggestions)
 
 ### 03/09/2025
 

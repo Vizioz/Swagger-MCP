@@ -9,7 +9,3 @@ export interface SavedSwaggerDefinition {
     url: string;
     type: string;
 }
-
-export interface SwaggerFileParams {
-    swaggerFilePath: string; // Required parameter for the path to the Swagger file
-}
