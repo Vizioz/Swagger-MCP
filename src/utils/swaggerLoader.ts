@@ -72,7 +72,7 @@ async function downloadAndCacheSwagger(url: string): Promise<string> {
 
         // Validate it's a Swagger/OpenAPI definition
         if (!swaggerData.openapi && !swaggerData.swagger) {
-            throw new Error('Invalid Swagger definition');
+            throw new Error('Invalid Swagger definition: missing required "openapi" or "swagger" field');
         }
 
         // Generate cache filename based on URL hash
