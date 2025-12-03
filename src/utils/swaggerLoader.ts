@@ -18,9 +18,13 @@ dotenv.config();
 // Cache directory for swagger files
 const SWAGGER_CACHE_DIR = path.join(process.cwd(), 'swagger-cache');
 
-// Ensure cache directory exists
-if (!fs.existsSync(SWAGGER_CACHE_DIR)) {
+// Ensure cache directory exists (handle race conditions safely)
+try {
     fs.mkdirSync(SWAGGER_CACHE_DIR, { recursive: true });
+} catch (err: any) {
+    if (err.code !== 'EEXIST') {
+        throw err;
+    }
 }
 
 /**
