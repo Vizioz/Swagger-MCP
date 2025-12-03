@@ -147,21 +147,8 @@ export async function loadSwaggerDefinition(swaggerFilePath?: string): Promise<a
  * @returns The Swagger definition object
  */
 async function loadSwaggerDefinitionFromUrl(swaggerUrl: string): Promise<any> {
-
-    // Generate cache filename based on URL hash
-    const urlObj = new URL(swaggerUrl);
-    const filename = crypto.createHash('sha256').update(urlObj.toString()).digest('hex');
-    const cacheFilePath = path.join(SWAGGER_CACHE_DIR, `${filename}.json`);
-    const cacheFilePathYaml = path.join(SWAGGER_CACHE_DIR, `${filename}.yaml`);
-
-    // Check if cached file exists
-    let cachedFilePath: string | null = null;
-    if (fs.existsSync(cacheFilePath)) {
-        cachedFilePath = cacheFilePath;
-    } else if (fs.existsSync(cacheFilePathYaml)) {
-        cachedFilePath = cacheFilePathYaml;
-    }
-
+    // Check if cached file exists using shared helper
+    let cachedFilePath = getCachedSwaggerFilePath(swaggerUrl);
     // If not cached, download it
     if (!cachedFilePath) {
         logger.info(`Swagger definition not found in cache, downloading from ${swaggerUrl}`);
