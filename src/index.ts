@@ -14,14 +14,29 @@ dotenv.config();
 
 import logger from "./utils/logger.js";
 
+// Helper to sanitize log output (removes newlines and control chars)
+function sanitizeForLog(input: string): string {
+  return input.replace(/[\r\n\x00-\x1F\x7F]+/g, '');
+}
+
 // Parse command line arguments
 const argv = minimist(process.argv.slice(2));
 const swaggerUrlFromCLI = argv['swagger-url'] || argv.swaggerUrl || null;
 
 // Store swagger URL in a way accessible to other modules
 if (swaggerUrlFromCLI) {
-  process.env.SWAGGER_URL_FROM_CLI = swaggerUrlFromCLI;
-  logger.info(`Swagger URL from CLI: ${swaggerUrlFromCLI}`);
+  let isValidUrl = false;
+  try {
+    // Throws if not a valid URL
+    new URL(swaggerUrlFromCLI);
+    isValidUrl = true;
+  } catch (e) {
+    logger.warn(`Invalid swagger-url provided via CLI: ${sanitizeForLog(swaggerUrlFromCLI)}`);
+  }
+  if (isValidUrl) {
+    process.env.SWAGGER_URL_FROM_CLI = swaggerUrlFromCLI;
+    logger.info(`Swagger URL from CLI: ${sanitizeForLog(swaggerUrlFromCLI)}`);
+  }
 }
 
 // Import tool definitions and handlers
