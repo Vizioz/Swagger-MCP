@@ -8,6 +8,7 @@ import { listEndpoints } from './listEndpoints.js';
 import { listEndpointModels } from './listEndpointModels.js';
 import { generateModelCode } from './generateModelCode.js';
 import { generateEndpointToolCode } from './generateEndpointToolCode.js';
+import { version } from './version.js';
 
 // Tool definitions array
 export const toolDefinitions = [
@@ -15,7 +16,8 @@ export const toolDefinitions = [
   listEndpoints,
   listEndpointModels,
   generateModelCode,
-  generateEndpointToolCode
+  generateEndpointToolCode,
+  version
 ];
 
 // Export all tool handlers
@@ -24,3 +26,4 @@ export { handleListEndpoints } from './listEndpoints.js';
 export { handleListEndpointModels } from './listEndpointModels.js';
 export { handleGenerateModelCode } from './generateModelCode.js';
 export { handleGenerateEndpointToolCode } from './generateEndpointToolCode.js';
+export { handleVersion } from './version.js';

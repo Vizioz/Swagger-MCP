@@ -14,6 +14,7 @@ const jsTests: string[] = [];
 
 // TypeScript tests
 const tsTests: string[] = [
+  'test-version.ts',
   'test-endpoint-tool-code.ts',
   'test-calendar-events.ts',
   'test-combined-features.ts',

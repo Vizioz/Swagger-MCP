@@ -46,7 +46,8 @@ import {
   handleListEndpoints,
   handleListEndpointModels,
   handleGenerateModelCode,
-  handleGenerateEndpointToolCode
+  handleGenerateEndpointToolCode,
+  handleVersion
 } from "./tools/index.js";
 
 // Import prompt definitions and handlers
@@ -157,6 +158,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case "generateEndpointToolCode":
         return await handleGenerateEndpointToolCode(input);
+
+      case "version":
+        return await handleVersion(input);
 
       default:
         return {
