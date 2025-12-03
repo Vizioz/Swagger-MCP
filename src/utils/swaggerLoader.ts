@@ -214,6 +214,6 @@ export async function getSwaggerFilePath(swaggerFilePath?: string): Promise<stri
     }
 
     // If none provided, throw error
-    throw new Error('Swagger URL or file path is required. Provide --swagger-url="url" as CLI argument, or swaggerFilePath parameter.');
+    throw new Error('Swagger URL or file path is required. Provide --swagger-url=<url> as CLI argument, or swaggerFilePath parameter.');
 }
 
