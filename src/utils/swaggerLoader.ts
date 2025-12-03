@@ -139,7 +139,7 @@ export async function loadSwaggerDefinition(swaggerFilePath?: string): Promise<a
     }
 
     // If none provided, throw error
-    throw new Error('Swagger URL or file path is required. Provide --swagger-url="url" as CLI argument, or swaggerFilePath parameter.');
+    throw new Error('Swagger URL or file path is required. Provide --swagger-url=<url> as CLI argument, or swaggerFilePath parameter.');
 }
 
 /**
