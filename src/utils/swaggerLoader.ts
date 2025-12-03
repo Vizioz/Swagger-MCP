@@ -39,6 +39,27 @@ export function getSwaggerUrlFromCLI(): string | null {
     return url.trim();
 }
 
+/**
+ * Gets the cached Swagger file path for a given URL if it exists
+ * @param swaggerUrl The Swagger URL
+ * @returns The cached file path or null if not cached
+ */
+function getCachedSwaggerFilePath(swaggerUrl: string): string | null {
+    const urlObj = new URL(swaggerUrl);
+    const filename = crypto.createHash('sha256').update(urlObj.toString()).digest('hex');
+    const cacheFilePath = path.join(SWAGGER_CACHE_DIR, `${filename}.json`);
+    const cacheFilePathYaml = path.join(SWAGGER_CACHE_DIR, `${filename}.yaml`);
+
+    // Check if cached file exists
+    if (fs.existsSync(cacheFilePath)) {
+        return cacheFilePath;
+    } else if (fs.existsSync(cacheFilePathYaml)) {
+        return cacheFilePathYaml;
+    }
+
+    return null;
+}
+
 
 /**
  * Downloads and caches a Swagger file from URL
