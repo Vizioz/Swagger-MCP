@@ -57,20 +57,19 @@ async function downloadAndCacheSwagger(url: string): Promise<string> {
             }
         });
 
-        // Check if response is YAML or JSON
-        const isYaml = url.endsWith('.yaml') || url.endsWith('.yml') ||
-            response.headers['content-type']?.includes('yaml') ||
-            (!response.data.trim().startsWith('{') && !response.data.trim().startsWith('['));
-
-        // Parse the response
+        // Try to parse as JSON first, then YAML if JSON fails
         let swaggerData: any;
-        if (isYaml) {
-            swaggerData = yaml.load(response.data);
-        } else {
+        let isYaml = false;
+        try {
             swaggerData = JSON.parse(response.data);
+        } catch (jsonErr) {
+            try {
+                swaggerData = yaml.load(response.data);
+                isYaml = true;
+            } catch (yamlErr) {
+                throw new Error('Response is neither valid JSON nor valid YAML');
+            }
         }
-
-        // Validate it's a Swagger/OpenAPI definition
         if (!swaggerData.openapi && !swaggerData.swagger) {
             throw new Error('Invalid Swagger definition: missing required "openapi" or "swagger" field');
         }
