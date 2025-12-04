@@ -2,6 +2,10 @@
 
 An MCP server that connects to a Swagger specification and helps an AI to build all the required models to generate a MCP server for that service.
 
+<a href="https://glama.ai/mcp/servers/@Vizioz/Swagger-MCP">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@Vizioz/Swagger-MCP/badge" alt="Swagger MCP server" />
+</a>
+
 ## Features
 
 - Downloads a Swagger specification and stores it locally for faster reference.
