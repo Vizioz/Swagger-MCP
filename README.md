@@ -75,6 +75,18 @@ You can also provide a Swagger URL via CLI argument:
 node build/index.js --swagger-url="https://petstore.swagger.io/v2/swagger.json"
 ```
 
+For an OpenAPI 3.1 example, use Xquik's public specification:
+
+```
+node build/index.js --swagger-url="https://xquik.com/openapi.json"
+```
+
+Swagger MCP downloads and caches this specification without Xquik credentials.
+Generated clients still need each operation's documented authentication.
+
+Xquik is an independent third-party service. Not affiliated with X Corp.
+"Twitter" and "X" are trademarks of X Corp.
+
 Or using the alternative format:
 
 ```

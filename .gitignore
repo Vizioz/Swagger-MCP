@@ -50,3 +50,6 @@ test.json
 
 # Ignore my todo notepad file
 TodoNotepad
+
+# Swagger definitions downloaded from --swagger-url
+swagger-cache/
