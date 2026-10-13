@@ -17,6 +17,7 @@ An MCP server that connects to a Swagger specification and helps an AI to build 
 
 - Node.js (v14 or higher)
 - npm or yarn
+- Or Docker, to run the server in a container (see [Running with Docker](#running-with-docker))
 
 ## Installation
 
@@ -107,6 +108,71 @@ To add this MCP server to Cursor:
 The Swagger MCP tools will now be available to the Cursor Agent in Composer.
 
 **Tip**: If you provide the `--swagger-url` CLI argument when configuring the server, you won't need to provide `swaggerFilePath` in tool calls, making the tools easier to use.
+
+### Running with Docker
+
+The server can also run in a Docker container, so Node.js doesn't need to be installed on the host. The server communicates over stdio, so the MCP client starts the container itself.
+
+#### Building the image
+
+```
+docker build -t swagger-mcp .
+```
+
+#### Container configuration
+
+- `SWAGGER_URL` (env, optional): Swagger definition to load at startup, equivalent to `--swagger-url`
+- `LOG_LEVEL` (env, optional): Logging level (default: `info`)
+- `/app/swagger-cache` (volume): Cache of downloaded Swagger definitions
+- `/app/logs` (volume): Log files (`error.log`, `combined.log`)
+
+Any extra arguments after the image name are passed to the server.
+
+Always run the container with `-i` (stdin open) and **without** `-t`; a TTY corrupts the JSON-RPC stream. Use `--rm` so each session doesn't leave a stopped container behind.
+
+#### Adding to Claude Code
+
+```
+claude mcp add swagger-mcp -- docker run --rm -i -e SWAGGER_URL=https://petstore.swagger.io/v2/swagger.json -v swagger-cache:/app/swagger-cache swagger-mcp
+```
+
+Everything after `--` is the command Claude Code runs. Add `--scope user` before `--` to make the server available in all projects. Check the connection with `claude mcp list` or `/mcp`.
+
+#### Adding to Claude Desktop, Cursor and other clients
+
+Add the server to the client's MCP configuration (for Claude Desktop: `%APPDATA%\Claude\claude_desktop_config.json` on Windows, `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
+
+```json
+{
+  "mcpServers": {
+    "swagger-mcp": {
+      "command": "docker",
+      "args": [
+        "run", "--rm", "-i",
+        "-e", "SWAGGER_URL=https://petstore.swagger.io/v2/swagger.json",
+        "-v", "swagger-cache:/app/swagger-cache",
+        "swagger-mcp"
+      ]
+    }
+  }
+}
+```
+
+Restart the client after editing the configuration. Docker must be running when the client starts.
+
+#### Using Docker Compose
+
+From the repository root containing `docker-compose.yml`, the image can be built with `docker compose build swagger-mcp` and started by the client with:
+
+```
+docker compose -f /path/to/docker-compose.yml run --rm -T swagger-mcp
+```
+
+`-T` disables the pseudo-TTY that `docker compose run` would otherwise allocate.
+
+#### Swagger files and paths inside the container
+
+All file paths are resolved inside the container. If you use `getSwaggerDefinition` or pass `swaggerFilePath` instead of `SWAGGER_URL`, mount a host folder and use the container path, e.g. `-v /path/to/specs:/specs` and `swaggerFilePath=/specs/api.json`.
 
 ### Available Swagger MCP Tools
 
