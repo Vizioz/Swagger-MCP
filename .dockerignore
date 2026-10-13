@@ -1,0 +1,14 @@
+node_modules
+build
+logs
+swagger-cache
+tests
+.git
+.github
+.env
+.env.*
+!.env.example
+.swagger-mcp
+*.log
+Dockerfile
+.dockerignore
